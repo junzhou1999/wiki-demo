@@ -20,3 +20,20 @@
   如果要扫描其他包下，加@ComponentScan注解
 * http请求404代表服务不可达，405代表方法Method禁用
 
+### 1-6
+* 增加hello接口测试test.http  
+##### 要点：  
+
+---
+
+* @PathVariable，汉语意思是：路径变量。顾名思义，就是要获取一个url 地址中的一部分值  
+  如：http://localhost:5921/hello/post/scott，把值scott传给函数。
+    * @PostMapping(value = "XXX/XXX/{id}")
+    * 方法名和需要绑定的url中变量名称一致，简写 @PathVariable Long id
+    * 若不一致，写成 @PathVariable("id") Long id2
+* @RequestParam，汉语意思就是： 请求参数。顾名思义，就是获取参数key对应的value。
+    * 前端：http://XXX/XXX?id=123
+    * 后端：@PostMapping(value = "XXX/XXX")
+* 以上为json传输方式
+
+---

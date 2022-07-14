@@ -1,0 +1,26 @@
+GET http://localhost:5921/hello
+#Accept: application/json
+
+#http测试
+> {%
+client.test("testHello",function() {
+  client.log("测试/hello接口")
+  client.log(response.body)
+  client.log(JSON.stringify(response.body))
+  client.assert(response.status === 200,"返回码不是200")
+})
+
+%}
+
+###
+
+POST http://localhost:5921/hello/post/scott
+Content-Type: application/json
+
+###
+
+POST http://localhost:5921/hello/post?user=John
+Content-Type: application/json
+
+
+###
