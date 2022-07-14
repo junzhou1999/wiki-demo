@@ -13,3 +13,10 @@
 ### 1-4
 * 修改启动图案
 
+### 1-5
+* 开发一个hello接口  
+##### 要点：
+* @SpringBootApplication只会扫描所在包以及其子包下的包，  
+  如果要扫描其他包下，加@ComponentScan注解
+* http请求404代表服务不可达，405代表方法Method禁用
+
