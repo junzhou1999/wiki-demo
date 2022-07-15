@@ -48,3 +48,10 @@
     * classpath:bootstrap.properties[.yml]
     * classpath:config/bootstrap.properties[.yml]    
     
+### 1-8
+* 集成热部署  
+##### 要点：
+* pom添加依赖
+* idea勾选Settings --》Compiler --》Build project automatically（应用启动前的编译）
+* 双击shift找到Registry的Action，勾选compiler.automake.allow.when.app.running（启动后的编译）
+* 想要让运行中的应用立马生效，直接Build Project
