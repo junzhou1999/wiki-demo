@@ -1,2 +1,6 @@
 server:
   port: 5921
+
+# 添加自定义配置
+test:
+  user: Taylor 斯威夫特

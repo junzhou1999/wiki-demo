@@ -37,3 +37,14 @@
 * 以上为json传输方式
 
 ---
+
+### 1-7
+* 增加自定义配置项
+##### 要点：  
+* SpringBoot会识别以下几组文件
+    * classpath:application.properties[.yml]
+    * classpath:config/application.properties[.yml]
+* SpringCloud还会识别以下几组文件    
+    * classpath:bootstrap.properties[.yml]
+    * classpath:config/bootstrap.properties[.yml]    
+    
