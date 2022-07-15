@@ -35,6 +35,20 @@
             <!-- Spring内置的依赖不用加版本号 -->
         </dependency>
 
+        <!-- mybatis依赖 -->
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+
+        <!-- postgres连接驱动 -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope> <!-- 此依赖无需参与项目编译，但是会参与项目的测试和运行，并且最终会参与打包； -->
+        </dependency>
+
     </dependencies>
 
     <build>

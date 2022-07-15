@@ -4,3 +4,15 @@ server:
 # 添加自定义配置
 test:
   user: Taylor Swift
+
+spring:
+  # postgres数据库连接
+  datasource:
+    url: jdbc:postgresql://localhost:5432/db_wikidev
+    username: scott
+    password: tiger
+    driver-class-name: org.postgresql.Driver
+
+# 配置mybatis所有Mapper.xml所在的路径
+mybatis:
+  mapper-locations: classpath:/mapper/**/*.xml

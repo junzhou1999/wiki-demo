@@ -1,7 +1,7 @@
 # 一个wiki的SpringBoot+Vue的知识库系统
 
 ### 1-1
-环境：Spring2.7.1+MySql 5.7+JDK 1.8
+环境：Spring2.7.1 + PostgreSQL 12.11 + JDK 1.8
 * 初始化项目
 
 ### 1-2
@@ -55,3 +55,8 @@
 * idea勾选Settings --》Compiler --》Build project automatically（应用启动前的编译）
 * 双击shift找到Registry的Action，勾选compiler.automake.allow.when.app.running（启动后的编译）
 * 想要让运行中的应用立马生效，直接Build Project
+
+### 2-1
+* 集成mybatis依赖
+* 配置PostgreSQL数据库作为数据源
+* 开发了/test/list接口
