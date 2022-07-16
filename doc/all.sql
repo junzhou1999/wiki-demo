@@ -45,4 +45,41 @@ select age(now(), '1988-05-24');
 insert into T_DEMO("name", age, sex, height, birthday)
 values ('莎拉波娃', 35, 'M', 188.82, '1987-04-19 17:57:55');
 
-delete from T_DEMO where name='莎拉波娃'
+delete
+from T_DEMO
+where name = '莎拉波娃';
+
+----------
+----------
+-- 电子书表
+----------
+----------
+create table T_EBOOK
+(
+    "id"           bigint not null,           -- id
+    "name"         varchar(50),               -- 名称
+    "category1_id" bigint,                    -- 分类1
+    "category2_id" bigint,                    -- 分类2
+    "description"  varchar(200),              -- 描述
+    "cover"        varchar(200),              -- 封面
+    "doc_count"    int    not null default 0, -- 文档数
+    "view_count"   int    not null default 0, -- 阅读数
+    "vote_count"   int    not null default 0, -- 点赞数
+    constraint PK_EBOOK primary key ("id")
+);
+comment on table T_EBOOK is '电子书';
+-- comment on column T_EBOOK.category1_id is '分类1';
+
+insert into T_EBOOK ("id", "name", description)
+values (1, 'Spring Boot 入门教程', '零基础入门 Java 开发，企业级应用开发最佳首选框架');
+insert into T_EBOOK ("id", "name", description)
+values (2, 'Vue 入门教程', '零基础入门 Vue 开发，企业级应用开发最佳首选框架');
+insert into T_EBOOK ("id", "name", description)
+values (3, 'Python 入门教程', '零基础入门 Python 开发，企业级应用开发最佳首选框架');
+insert into T_EBOOK ("id", "name", description)
+values (4, 'Mysql 入门教程', '零基础入门 Mysql 开发，企业级应用开发最佳首选框架');
+insert into T_EBOOK ("id", "name", description)
+values (5, 'Oracle 入门教程', '零基础入门 Oracle 开发，企业级应用开发最佳首选框架');
+
+select *
+from T_EBOOK;

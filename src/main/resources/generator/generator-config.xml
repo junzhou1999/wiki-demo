@@ -36,6 +36,7 @@
                              type="XMLMAPPER"/>
 
         <!-- 模式，表名，实体类名字 -->
-        <table schema="public" tableName="T_DEMO" domainObjectName="Demo"/>
+        <!-- <table schema="public" tableName="T_DEMO" domainObjectName="Demo"/>-->
+        <table schema="public" tableName="T_EBOOK" domainObjectName="Ebook"/>
     </context>
 </generatorConfiguration>
