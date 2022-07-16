@@ -60,3 +60,9 @@
 * 集成mybatis依赖
 * 配置PostgreSQL数据库作为数据源
 * 开发了/test/list接口
+
+### 2-2
+* 集成Mybatis generator官方生成器生成持久层代码
+##### 要点：
+* 配置好generator-config配置文件后，新建maven的启动项，  
+  命令是mybatis-generator:generate -e
