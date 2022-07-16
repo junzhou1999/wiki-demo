@@ -1,13 +1,12 @@
 package org.abc.wiki.mapper;
 
 import java.util.List;
-
 import org.abc.wiki.domain.Demo;
 import org.abc.wiki.domain.DemoExample;
 import org.apache.ibatis.annotations.Param;
 
 public interface DemoMapper {
-	long countByExample(DemoExample example);
+    long countByExample(DemoExample example);
 
 	int deleteByExample(DemoExample example);
 

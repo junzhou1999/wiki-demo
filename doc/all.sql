@@ -41,3 +41,8 @@ insert into T_DEMO("name", age, sex, height, birthday)
 values ('波多', 34, 'F', 163.88, '1988-05-24');
 
 select age(now(), '1988-05-24');
+
+insert into T_DEMO("name", age, sex, height, birthday)
+values ('莎拉波娃', 35, 'M', 188.82, '1987-04-19 17:57:55');
+
+delete from T_DEMO where name='莎拉波娃'

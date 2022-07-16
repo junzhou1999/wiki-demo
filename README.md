@@ -66,3 +66,10 @@
 ##### 要点：
 * 配置好generator-config配置文件后，新建maven的启动项，  
   命令是mybatis-generator:generate -e
+  
+### 2-3
+* 用Http Client测试使用generator生成的代码
+##### 要点：
+* POST请求的请求体以JSON的格式传输请求体可以写在路径，也可以写到外边。  
+  需要注意后端的接收处理。（用不同注解来匹配格式）
+* 数据库连接stringtype=unspecified用于把DEMO表中的enum类型当string类型存储  

@@ -1,0 +1,22 @@
+GET http://localhost:5921/demo/list
+Accept: application/json
+
+###
+
+POST http://localhost:5921/demo/find/1001
+Content-Type: application/json
+
+### POST with JSON BODY
+POST http://localhost:5921/demo/insert
+Content-Type: application/json
+
+//请求正文
+{
+  "name": "莎拉波娃",
+  "age": 35,
+  "sex": "F",
+  "height": 188.82,
+  "birthday": "1987-04-19 17:57:55"
+}
+
+###
