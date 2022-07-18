@@ -127,3 +127,9 @@
 ##### 要点：
 * 把通用的，静态不变的代码块如：header和footer放到App.vue，  
   其他不同页面的放到各自页面去
+
+### 4-5
+* 把通用的header和footer整合到component，并剔除HelloWorld组件
+##### 要点：
+* import组件，components加入该组件，template使用组件
+* template使用的组件名是组件源码所起的名字
