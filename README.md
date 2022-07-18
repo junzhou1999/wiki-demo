@@ -99,3 +99,16 @@
 * static不属于类对象的一部分，需要以下面的形式声明泛型方法使用泛型  
   public static **\<T>**  List\<T> func() { }
 * 获取运行时类的实例（无参构造）：class.getInstance()  
+
+### 4-1
+* 使用Vue CLI生成web项目
+##### 要点：
+* Vue CLI = Vue + 一堆插件
+* 使用nodejs改镜像地址和安装Vue CLI
+    * npm get registry
+    * npm config set registry http://registry.npm.taobao.org
+    * npm install -g @vue/cli
+* public/index.html：Vue框架的主页：
+* **src**/main.ts：初始启动配置文件，Vue CLI通过加载这个文件，  
+  把App.vue渲染到index.html，完成页面显示
+* package.json：模块配置信息和项目配置
