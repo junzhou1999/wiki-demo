@@ -133,3 +133,7 @@
 ##### 要点：
 * import组件，components加入该组件，template使用组件
 * template使用的组件名是组件源码所起的名字
+
+### 5-1
+* 集成axios
+* npm install axios -- save 
