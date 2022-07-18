@@ -2,7 +2,6 @@
     <a-layout>
         <a-layout-sider width="200" style="background: #fff">
             <a-menu
-                    v-model:selectedKeys="selectedKeys2"
                     v-model:openKeys="openKeys"
                     mode="inline"
                     :style="{ height: '100%', borderRight: 0 }"
@@ -55,10 +54,23 @@
 
 <script lang="ts">
     import {defineComponent} from 'vue';
+    import axios from 'axios';
 
     export default defineComponent({
         name: 'HomeView',
-        components: {
+        setup() {
+            console.log('setup()');
+            /**
+             *  get完成以后还有回调方法，用js的Lambda表达式
+             */
+            axios.get('http://localhost:5921/ebook/list?name=Oracle').then(
+                // function (response) {
+                //     console.log(response);
+                // }
+                (response) => {
+                    console.log(response);
+                }
+            )
         },
     });
 </script>

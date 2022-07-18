@@ -136,4 +136,10 @@
 
 ### 5-1
 * 集成axios
-* npm install axios -- save 
+* npm install axios -- save
+
+### 5-2
+* 使用axios调用后端接口/ebook/list
+##### 要点：
+* setup()：vue3新增的初始化方法，组件加载完后会执行这个方法 
+* 跨域连接配置
