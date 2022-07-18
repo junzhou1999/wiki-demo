@@ -112,3 +112,9 @@
 * **src**/main.ts：初始启动配置文件，Vue CLI通过加载这个文件，  
   把App.vue渲染到index.html，完成页面显示
 * package.json：模块配置信息和项目配置
+
+### 4-2
+* 集成Ant Design View，加入按钮示例
+##### 要点：
+* 安装最新版的Ant Design View：在web目录下：npm install ant-design-vue --save  
+  我安装的版本是3.2.10

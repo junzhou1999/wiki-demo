@@ -1,5 +1,9 @@
 <template>
   <div class="home">
+    <a-space style="width: 100%">
+      <a-button type="primary" loading>Loading</a-button>
+      <a-button type="primary" size="small" loading>Loading</a-button>
+    </a-space>
     <img alt="Vue logo" src="../assets/logo.png">
     <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
   </div>
