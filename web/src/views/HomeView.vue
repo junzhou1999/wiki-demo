@@ -43,45 +43,38 @@
                 </a-sub-menu>
             </a-menu>
         </a-layout-sider>
-        <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="listData">
-            <template #footer>
-                <div>
-                    <b>ant design vue</b>
-                    footer part
-                </div>
-            </template>
-            <template #renderItem="{ item }">
-                <a-list-item key="item.title">
-                    <template #actions>
+        <a-layout-content
+                :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
+        >
+            <!-- 取后端数据，电子书不多，不再分页，每行显示多个 -->
+            <a-list item-layout="vertical" size="large" :data-source="ebooks" :grid="{ gutter: 20, column: 3 }">
+                <template #renderItem="{ item }">   <!-- ebooks给到item变量，循环遍历 -->
+                    <a-list-item key="item.name">   <!-- 后端组件 -->
+                        <template #actions>
           <span v-for="{ type, text } in actions" :key="type">
-            <component :is="type" style="margin-right: 8px" />
-            {{ text }}
+            <component :is="type" style="margin-right: 8px"/>
+            {{ text }}   <!-- 点赞收藏文字 -->
           </span>
-                    </template>
-                    <template #extra>
-                        <img
-                                width="272"
-                                alt="logo"
-                                src="https://gw.alipayobjects.com/zos/rmsportal/mqaQswcyDLcXyDKnZfES.png"
-                        />
-                    </template>
-                    <a-list-item-meta :description="item.description">
-                        <template #title>
-                            <a :href="item.href">{{ item.title }}</a>
                         </template>
-                        <template #avatar><a-avatar :src="item.avatar" /></template>
-                    </a-list-item-meta>
-                    {{ item.content }}
-                </a-list-item>
-            </template>
-        </a-list>
+                        <a-list-item-meta :description="item.description">   <!-- 描述 -->
+                            <template #title>
+                                <a :href="item.href">{{ item.name }}</a>
+                            </template>
+                            <template #avatar>
+                                <a-avatar :src="item.cover"/>    <!-- 图标 -->
+                            </template>
+                        </a-list-item-meta>
+                    </a-list-item>
+                </template>
+            </a-list>
+        </a-layout-content>
     </a-layout>
 </template>
 
 <script lang="ts">
     import {defineComponent, onMounted, ref} from 'vue';
     import axios from 'axios';
-    import { StarOutlined, LikeOutlined, MessageOutlined } from '@ant-design/icons-vue';
+    import {StarOutlined, LikeOutlined, MessageOutlined} from '@ant-design/icons-vue';
 
     export default defineComponent({
         name: 'HomeView',
@@ -95,7 +88,7 @@
 
             onMounted(() => {
                 console.log('onMounted()');
-                axios.get('http://localhost:5921/ebook/list?name=Oracle').then(
+                axios.get('http://localhost:5921/ebook/list').then(
                     (response) => {
                         console.log(response);
                         const data = response.data;
@@ -103,38 +96,27 @@
                     });
             });  // onMounted
 
-            const listData: Record<string, string>[] = [];
-
-            for (let i = 0; i < 23; i++) {
-                listData.push({
-                    href: 'https://www.antdv.com/',
-                    title: `ant design vue part ${i}`,
-                    avatar: 'https://joeschmoe.io/api/v1/random',
-                    description:
-                        'Ant Design, a design language for background applications, is refined by Ant UED Team.',
-                    content:
-                        'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
-                });
-            };
-
-            const pagination = {
-                onChange: (page: number) => {
-                    console.log(page);
-                },
-                pageSize: 3,
-            };
             const actions: Record<string, string>[] = [
-                { type: 'StarOutlined', text: '156' },
-                { type: 'LikeOutlined', text: '156' },
-                { type: 'MessageOutlined', text: '2' },
+                {type: 'StarOutlined', text: '156'},
+                {type: 'LikeOutlined', text: '156'},
+                {type: 'MessageOutlined', text: '2'},
             ];
 
             return {
                 ebooks,  //3
-                listData,
-                pagination,
                 actions,
             }
         }  // setup
     });
 </script>
+
+<style scoped>
+    /*scoped，只在当前页面显示，下是图标样式*/
+    .ant-avatar {
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        border-radius: 8%;
+        margin: 5px 0;
+    }
+</style>

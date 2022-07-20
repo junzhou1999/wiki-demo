@@ -2,8 +2,11 @@ GET http://localhost:5921/ebook/list
 Accept: application/json
 
 ###
-
 GET http://localhost:5921/ebook/list?name=Oracle
+Accept: application/json
+
+###
+GET http://localhost:5921/ebook/list
 Accept: application/json
 
 ###

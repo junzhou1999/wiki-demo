@@ -7,6 +7,7 @@ import org.abc.wiki.req.EbookReq;
 import org.abc.wiki.resp.EbookResp;
 import org.abc.wiki.util.CopyUtil;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -33,8 +34,10 @@ public class EbookService {
 		// where条件类
 		EbookExample.Criteria criteria = ebookExample.createCriteria();
 
-		// 模糊查询条件
-		criteria.andNameLike("%" + ebookReq.getName() + "%");
+		// 模糊查询条件，动态SQL语句
+		if (!ObjectUtils.isEmpty(ebookReq.getName())) {
+			criteria.andNameLike("%" + ebookReq.getName() + "%");
+		}
 		List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
 
 /*弃用
