@@ -46,30 +46,41 @@
         <a-layout-content
                 :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
         >
-            Content
+            <pre>
+{{ebooks}}
+            </pre>
         </a-layout-content>
     </a-layout>
 </template>
 
 <script lang="ts">
-    import {defineComponent, onMounted} from 'vue';
+    import {defineComponent, onMounted, reactive, toRef} from 'vue';
     import axios from 'axios';
 
     export default defineComponent({
         name: 'HomeView',
         setup() {
             console.log('setup()');
+            /**
+             * reactive里面放的是对象，book属性默认是空数组
+             * 这样ebooks对象的book属性就变成响应式变量
+             */
+            const ebooks = reactive({books: []});  //1
 
-            onMounted(
-                () => {
-                    console.log('onMounted()');
-                    axios.get('http://localhost:5921/ebook/list?name=Oracle').then(
-                        (response) => {
-                            console.log(response);
-                        }
-                    );
-                }
-            )
-        },
+            onMounted(() => {
+                console.log('onMounted()');
+                axios.get('http://localhost:5921/ebook/list?name=Oracle').then(
+                    (response) => {
+                        console.log(response);
+                        const data = response.data;
+                        ebooks.books = data.content;  //2
+                    });
+            });  // onMounted
+
+            return {
+                // toRef(对象,属性)
+                ebooks: toRef(ebooks, 'books')  //3，这里的返回名称任意，用于html引用
+            }
+        }  // setup
     });
 </script>

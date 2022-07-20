@@ -150,3 +150,6 @@
 ##### 要点：
 * mounted(vue2)/onMounted(vue3)：页面渲染后执行的方法
     * 初始化的逻辑操作就放进onMounted里
+
+### 5-5
+* 使用reactive实现数据绑定
