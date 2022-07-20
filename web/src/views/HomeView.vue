@@ -54,18 +54,14 @@
 </template>
 
 <script lang="ts">
-    import {defineComponent, onMounted, reactive, toRef} from 'vue';
+    import {defineComponent, onMounted, ref} from 'vue';
     import axios from 'axios';
 
     export default defineComponent({
         name: 'HomeView',
         setup() {
             console.log('setup()');
-            /**
-             * reactive里面放的是对象，book属性默认是空数组
-             * 这样ebooks对象的book属性就变成响应式变量
-             */
-            const ebooks = reactive({books: []});  //1
+            const ebooks = ref();  //1
 
             onMounted(() => {
                 console.log('onMounted()');
@@ -73,13 +69,12 @@
                     (response) => {
                         console.log(response);
                         const data = response.data;
-                        ebooks.books = data.content;  //2
+                        ebooks.value = data.content;  //2，一定要取的是ref的.value
                     });
             });  // onMounted
 
             return {
-                // toRef(对象,属性)
-                ebooks: toRef(ebooks, 'books')  //3，这里的返回名称任意，用于html引用
+                ebooks  //3
             }
         }  // setup
     });
