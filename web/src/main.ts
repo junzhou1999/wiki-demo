@@ -5,6 +5,7 @@ import store from './store'
 import Antd from 'ant-design-vue'
 import 'ant-design-vue/dist/antd.css'
 import * as Icons from '@ant-design/icons-vue'
+import axios from 'axios'
 
 const app = createApp(App);
 
@@ -19,3 +20,6 @@ for (const index in icons) {
 // 打印测试日志
 console.log('环境：', process.env.NODE_ENV);
 console.log('服务端：', process.env.VUE_APP_SERVER);
+
+// axios的默认baseURL
+axios.defaults.baseURL = process.env.VUE_APP_SERVER
