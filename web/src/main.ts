@@ -15,3 +15,7 @@ const icons: any = Icons;
 for (const index in icons) {
     app.component(index, icons[index]);
 }
+
+// 打印测试日志
+console.log('环境：', process.env.NODE_ENV);
+console.log('服务端：', process.env.VUE_APP_SERVER);
