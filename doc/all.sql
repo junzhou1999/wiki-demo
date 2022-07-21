@@ -83,3 +83,27 @@ values (5, 'Oracle 入门教程', '零基础入门 Oracle 开发，企业级应�
 
 select *
 from T_EBOOK;
+
+update T_EBOOK
+set "cover"='image/wiki_spring.png'
+where "id" = 1;
+update T_EBOOK
+set "cover"='image/wiki_vue.jpg'
+where "id" = 2;
+update T_EBOOK
+set "cover"='image/wiki_python.jpg'
+where "id" = 3;
+update T_EBOOK
+set "cover"='image/wiki_mysql.png'
+where "id" = 4;
+update T_EBOOK
+set "cover"='image/wiki_oracle.jpg'
+where "id" = 5;
+
+update T_EBOOK
+set "category1_id"=11,
+    "category2_id"=22,
+    "doc_count"=156,
+    "view_count"=23,
+    vote_count=20
+where "id" = 2;
