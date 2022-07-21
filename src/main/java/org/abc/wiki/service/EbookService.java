@@ -1,11 +1,15 @@
 package org.abc.wiki.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.abc.wiki.domain.Ebook;
 import org.abc.wiki.domain.EbookExample;
 import org.abc.wiki.mapper.EbookMapper;
 import org.abc.wiki.req.EbookReq;
 import org.abc.wiki.resp.EbookResp;
 import org.abc.wiki.util.CopyUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -14,6 +18,9 @@ import java.util.List;
 
 @Service
 public class EbookService {
+
+	private static final Logger LOG =
+			LoggerFactory.getLogger(EbookService.class);
 
 	@Resource
 	private EbookMapper ebookMapper;
@@ -38,7 +45,13 @@ public class EbookService {
 		if (!ObjectUtils.isEmpty(ebookReq.getName())) {
 			criteria.andNameLike("%" + ebookReq.getName() + "%");
 		}
+
+		// 第几页，每页几个数据项，分页和查询之间如果有其他的select语句，会使得分页效果失效
+		PageHelper.startPage(3, 2);
 		List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
+		PageInfo<Object> pageInfo = new PageInfo<>(ebookList);
+		LOG.info("总行数：{}", pageInfo.getTotal());
+		LOG.info("总页数：{}", pageInfo.getPages());
 
 /*弃用
 		ArrayList<EbookResp> respList = new ArrayList<>();
