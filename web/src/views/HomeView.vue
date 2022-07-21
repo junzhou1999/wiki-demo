@@ -83,14 +83,11 @@
         MessageOutlined,
 
         setup() {
-            console.log('setup()');
             const ebooks = ref();  //1
 
             onMounted(() => {
-                console.log('onMounted()333');
                 axios.get('/ebook/list').then(
                     (response) => {
-                        console.log(response);
                         const data = response.data;
                         ebooks.value = data.content;  //2，一定要取的是ref的.value
                     });
