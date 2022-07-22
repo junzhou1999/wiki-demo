@@ -5,8 +5,9 @@ import com.github.pagehelper.PageInfo;
 import org.abc.wiki.domain.Ebook;
 import org.abc.wiki.domain.EbookExample;
 import org.abc.wiki.mapper.EbookMapper;
-import org.abc.wiki.req.EbookReq;
-import org.abc.wiki.resp.EbookResp;
+import org.abc.wiki.req.EbookQueryReq;
+import org.abc.wiki.req.EbookSaveReq;
+import org.abc.wiki.resp.EbookQueryResp;
 import org.abc.wiki.resp.PageResp;
 import org.abc.wiki.util.CopyUtil;
 import org.slf4j.Logger;
@@ -37,19 +38,19 @@ public class EbookService {
 	}
 	*/
 
-	public PageResp<EbookResp> list(EbookReq ebookReq) {
+	public PageResp<EbookQueryResp> list(EbookQueryReq ebookQueryReq) {
 		EbookExample ebookExample = new EbookExample();
 		// where条件类
 		EbookExample.Criteria criteria = ebookExample.createCriteria();
-
+		ebookExample.setOrderByClause("id");   // PostreSQL更新完后顺序会改变的
 		// 模糊查询条件，动态SQL语句
-		if (!ObjectUtils.isEmpty(ebookReq.getName())) {
-			criteria.andNameLike("%" + ebookReq.getName() + "%");
+		if (!ObjectUtils.isEmpty(ebookQueryReq.getName())) {
+			criteria.andNameLike("%" + ebookQueryReq.getName() + "%");
 		}
 
 		// 第几页，每页几个数据项，分页和查询之间如果有其他的select语句，会使得分页效果失效
-		if (ebookReq.getPage() != 0 && ebookReq.getSize() != 0) {
-			PageHelper.startPage(ebookReq.getPage(), ebookReq.getSize());
+		if (ebookQueryReq.getPage() != 0 && ebookQueryReq.getSize() != 0) {
+			PageHelper.startPage(ebookQueryReq.getPage(), ebookQueryReq.getSize());
 		}
 		List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
 		PageInfo<Object> pageInfo = new PageInfo<>(ebookList);
@@ -67,11 +68,26 @@ public class EbookService {
 		}
 */
 
-		PageResp<EbookResp> pageResp = new PageResp<>();
-		List<EbookResp> respList = CopyUtil.copyList(ebookList, EbookResp.class);
+		PageResp<EbookQueryResp> pageResp = new PageResp<>();
+		List<EbookQueryResp> respList = CopyUtil.copyList(ebookList, EbookQueryResp.class);
 
 		pageResp.setTotal(pageInfo.getTotal());
 		pageResp.setList(respList);
 		return pageResp;
+	}
+
+	/**
+	 * 更新和新增操作
+	 */
+	public void save(EbookSaveReq req) {
+		Ebook ebook = CopyUtil.copy(req, Ebook.class);
+		if (ObjectUtils.isEmpty(req.getId())) {
+			// 新增
+			ebookMapper.insert(ebook);
+		} else {
+			// 更新，有id主键的就是更新"where id=?"
+			ebookMapper.updateByPrimaryKey(ebook);
+		}
+		return;
 	}
 }

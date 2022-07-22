@@ -226,3 +226,10 @@
 
 ### 7-10
 * 模态框显示电子书表单，编辑某一行时可以将该行数据显示到表单
+
+### 7-11
+* 完成电子书编辑功能
+* 将查询接口改为EbookQueryReq和EbookQueryResp
+##### 要点：
+* axios的post请求是"application/json"方式
+* 用json传输的post请求后端处理参数时要加入@RequestBody注解

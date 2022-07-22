@@ -67,9 +67,9 @@
         setup() {
             const ebooks = ref();
             const pagination = ref({
-                current: 1,   // 当前页
-                pageSize: 3,  // 分页条数
-                total: 0
+                current: 1,   // 当前页（动态）
+                pageSize: 3,  // 分页条数（静态）
+                total: 0      // 列表总数（动态）
             });
             const loading = ref(false);
 
@@ -113,7 +113,7 @@
             ];
 
             /**
-             * 数据查询
+             * 向后端指定分页参数查询获取，并获取后端确切的数据和分页参数
              **/
             const handleQuery = (params: any) => {
                 loading.value = true;
@@ -123,7 +123,6 @@
                         page: params.page,
                         size: params.size
                     }
-
                 }).then((response) => {
                     loading.value = false;
                     const data = response.data;
@@ -151,10 +150,20 @@
             const modalLoading = ref<boolean>(false);
             const handleModalOk = () => {
                 modalLoading.value = true;
-                setTimeout(() => {
-                    modalVisible.value = false;
-                    modalLoading.value = false;
-                }, 2000);
+                // axios.post："application/json"
+                axios.post("/ebook/save", ebook.value).then((response) => {
+                    const data = response.data;
+                    if (data.success) {
+                        modalVisible.value = false;
+                        modalLoading.value = false;
+
+                        // 刷新页面
+                        handleQuery({
+                            page: pagination.value.current,
+                            size: pagination.value.pageSize
+                        });
+                    }
+                });
             };
 
             const ebook = ref({});
