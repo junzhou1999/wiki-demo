@@ -86,10 +86,15 @@
             const ebooks = ref();  //1
 
             onMounted(() => {
-                axios.get('/ebook/list').then(
+                axios.get('/ebook/list', {
+                    params: {
+                        page: 1,
+                        size: 999
+                    }
+                }).then(
                     (response) => {
                         const data = response.data;
-                        ebooks.value = data.content;  //2，一定要取的是ref的.value
+                        ebooks.value = data.content.list;  //2，一定要取的是ref的.value
                     });
             });  // onMounted
 
