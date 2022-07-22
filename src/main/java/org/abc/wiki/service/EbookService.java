@@ -48,7 +48,9 @@ public class EbookService {
 		}
 
 		// 第几页，每页几个数据项，分页和查询之间如果有其他的select语句，会使得分页效果失效
-		PageHelper.startPage(ebookReq.getPage(), ebookReq.getSize());
+		if (ebookReq.getPage() != 0 && ebookReq.getSize() != 0) {
+			PageHelper.startPage(ebookReq.getPage(), ebookReq.getSize());
+		}
 		List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
 		PageInfo<Object> pageInfo = new PageInfo<>(ebookList);
 		LOG.info("总行数：{}", pageInfo.getTotal());

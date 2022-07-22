@@ -43,7 +43,7 @@
             const ebooks = ref();
             const pagination = ref({
                 current: 1,   // 当前页
-                pageSize: 2,  // 分页条数
+                pageSize: 3,  // 分页条数
                 total: 0
             });
             const loading = ref(false);
@@ -92,13 +92,21 @@
              **/
             const handleQuery = (params: any) => {
                 loading.value = true;
-                axios.get("/ebook/list", params).then((response) => {
+                axios.get("/ebook/list", {
+                    params: {
+                        // 只用下面这两个属性作为参数
+                        page: params.page,
+                        size: params.size
+                    }
+
+                }).then((response) => {
                     loading.value = false;
                     const data = response.data;
-                    ebooks.value = data.content;
+                    ebooks.value = data.content.list;
 
                     // 重置分页按钮
                     pagination.value.current = params.page;
+                    pagination.value.total = data.content.total;
                 });
             };
 
@@ -109,11 +117,15 @@
                 handleQuery({
                     page: pagination.current,
                     size: pagination.pageSize
+                    // 可以有其他参数
                 });
             };
 
             onMounted(() => {
-                handleQuery({});  // 初始的时候也要查一次
+                handleQuery({
+                    page: 1,
+                    size: pagination.value.pageSize
+                });  // 初始的时候也要查一次
             });
 
             return {
