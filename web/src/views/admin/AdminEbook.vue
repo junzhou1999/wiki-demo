@@ -20,7 +20,7 @@
                 <template v-slot:action="{ text, record }">
                     <!-- 按钮之间要有空格 -->
                     <a-space size="small">
-                        <a-button type="primary" @click="edit">
+                        <a-button type="primary" @click="edit(record)">
                             编辑
                         </a-button>
                         <a-button type="danger">
@@ -38,7 +38,23 @@
             :confirm-loading="modalLoading"
             @ok="handleModalOk"
     >
-        <p>test</p>
+        <a-form model="ebook" :label-col="{ span: 4 }" :wrapper-col="wrapperCol">
+            <a-form-item label="名称">
+                <a-input v-model:value="ebook.name"/>
+            </a-form-item>
+            <a-form-item label="封面">
+                <a-input v-model:value="ebook.cover"/>
+            </a-form-item>
+            <a-form-item label="分类一">
+                <a-input v-model:value="ebook.category1Id"/>
+            </a-form-item>
+            <a-form-item label="分类二">
+                <a-input v-model:value="ebook.category2Id"/>
+            </a-form-item>
+            <a-form-item label="描述">
+                <a-input v-model:value="ebook.description"/>
+            </a-form-item>
+        </a-form>
     </a-modal>
 </template>
 
@@ -141,8 +157,10 @@
                 }, 2000);
             };
 
+            const ebook = ref({});
             // 编辑
-            const edit = () => {
+            const edit = (record: any) => {
+                ebook.value = record;    // 把表格中ebook的数据项复制给新的变量ebook
                 modalVisible.value = true;
             };
 
@@ -162,7 +180,8 @@
                 modalVisible,
                 modalLoading,
                 edit,
-                handleModalOk
+                handleModalOk,
+                ebook
             }
         }
     });
