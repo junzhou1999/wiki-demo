@@ -7,6 +7,7 @@ import org.abc.wiki.domain.EbookExample;
 import org.abc.wiki.mapper.EbookMapper;
 import org.abc.wiki.req.EbookReq;
 import org.abc.wiki.resp.EbookResp;
+import org.abc.wiki.resp.PageResp;
 import org.abc.wiki.util.CopyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class EbookService {
 	}
 	*/
 
-	public List<EbookResp> list(EbookReq ebookReq) {
+	public PageResp<EbookResp> list(EbookReq ebookReq) {
 		EbookExample ebookExample = new EbookExample();
 		// where条件类
 		EbookExample.Criteria criteria = ebookExample.createCriteria();
@@ -47,7 +48,7 @@ public class EbookService {
 		}
 
 		// 第几页，每页几个数据项，分页和查询之间如果有其他的select语句，会使得分页效果失效
-		PageHelper.startPage(3, 2);
+		PageHelper.startPage(ebookReq.getPage(), ebookReq.getSize());
 		List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
 		PageInfo<Object> pageInfo = new PageInfo<>(ebookList);
 		LOG.info("总行数：{}", pageInfo.getTotal());
@@ -64,7 +65,11 @@ public class EbookService {
 		}
 */
 
+		PageResp<EbookResp> pageResp = new PageResp<>();
 		List<EbookResp> respList = CopyUtil.copyList(ebookList, EbookResp.class);
-		return respList;
+
+		pageResp.setTotal(pageInfo.getTotal());
+		pageResp.setList(respList);
+		return pageResp;
 	}
 }
