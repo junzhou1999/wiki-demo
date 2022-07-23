@@ -205,7 +205,7 @@ public class EbookExample {
 		}
 
 		public Criteria andNameLike(String value) {
-			addCriterion("name like", value, "name");
+			addCriterion("name ilike", value, "name");
 			return (Criteria) this;
 		}
 

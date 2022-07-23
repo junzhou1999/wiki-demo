@@ -3,9 +3,24 @@
         <a-layout-content
                 :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
         >
-            <a-button type="primary" @click="add()" size="large">
-                新增
-            </a-button>
+            <p>
+                <a-form :model="queryParam" layout="inline">
+                    <a-form-item>
+                        <a-input-search
+                                v-model:value="queryParam.name"
+                                placeholder="名称"
+                                enter-button="查询"
+                                size="large"
+                                @search="handleQuery({page:1, size:pagination.pageSize, name:queryParam.name})"
+                        />
+                    </a-form-item>
+                    <a-form-item>
+                        <a-button type="primary" @click="add()" size="large">
+                            新增
+                        </a-button>
+                    </a-form-item>
+                </a-form>
+            </p>
             <!-- 表格 -->
             <a-table
                     :columns="columns"
@@ -132,9 +147,9 @@
                 loading.value = true;
                 axios.get("/ebook/list", {
                     params: {
-                        // 只用下面这两个属性作为参数
                         page: params.page,
-                        size: params.size
+                        size: params.size,
+                        name: queryParam.value.name
                     }
                 }).then((response) => {
                     loading.value = false;
@@ -212,6 +227,10 @@
                 });
             };
 
+            // 查询的参数
+            const queryParam = ref();
+            queryParam.value = {};
+
             onMounted(() => {
                 handleQuery({
                     page: 1,
@@ -233,7 +252,11 @@
 
                 edit,
                 add,
-                handleDelete
+                handleDelete,
+
+                queryParam,
+                handleQuery
+
             }
         }
     });
