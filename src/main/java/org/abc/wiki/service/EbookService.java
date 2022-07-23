@@ -93,6 +93,12 @@ public class EbookService {
 			// 更新，有id主键的就是更新"where id=?"
 			ebookMapper.updateByPrimaryKey(ebook);
 		}
-		return;
+	}
+
+	/**
+	 * 删除操作
+	 */
+	public void delete(Long id) {
+		ebookMapper.deleteByPrimaryKey(id);
 	}
 }
