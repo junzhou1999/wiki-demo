@@ -81,7 +81,7 @@
             const ebooks = ref();
             const pagination = ref({
                 current: 1,   // 当前页（动态）
-                pageSize: 1000,  // 分页条数（静态） //// 错误测试
+                pageSize: 3,  // 分页条数（静态）
                 total: 0      // 列表总数（动态）
             });
             const loading = ref(false);
@@ -170,15 +170,17 @@
                 // axios.post："application/json"
                 axios.post("/ebook/save", ebook.value).then((response) => {
                     const data = response.data;
+                    modalLoading.value = false;   // 无论成功与否loading效果都要终止
                     if (data.success) {
                         modalVisible.value = false;
-                        modalLoading.value = false;
 
                         // 刷新页面
                         handleQuery({
                             page: pagination.value.current,
                             size: pagination.value.pageSize
                         });
+                    } else {
+                        message.error(data.message)
                     }
                 });
             };
