@@ -3,6 +3,9 @@
         <a-layout-content
                 :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
         >
+            <a-button type="primary" @click="add()" size="large">
+                新增
+            </a-button>
             <!-- 表格 -->
             <a-table
                     :columns="columns"
@@ -32,6 +35,7 @@
         </a-layout-content>
     </a-layout>
 
+    <!-- 对话框，内含表单 -->
     <a-modal
             v-model:visible="modalVisible"
             title="电子书表单"
@@ -46,10 +50,10 @@
                 <a-input v-model:value="ebook.cover"/>
             </a-form-item>
             <a-form-item label="分类一">
-                <a-input v-model:value="ebook.category1Id"/>
+                <a-input-number v-model:value="ebook.category1Id" style="width: 100%" :min="1"/>
             </a-form-item>
             <a-form-item label="分类二">
-                <a-input v-model:value="ebook.category2Id"/>
+                <a-input-number v-model:value="ebook.category2Id" style="width: 100%" :min="1"/>
             </a-form-item>
             <a-form-item label="描述">
                 <a-input v-model:value="ebook.description"/>
@@ -169,8 +173,14 @@
             const ebook = ref({});
             // 编辑
             const edit = (record: any) => {
-                ebook.value = record;    // 把表格中ebook的数据项复制给新的变量ebook
-                modalVisible.value = true;
+                ebook.value = record;    // 把表格中ebooks的数据项复制给新的变量ebook
+                modalVisible.value = true;  // 弹出对话框
+            };
+
+            // 新增
+            const add = () => {
+                ebook.value = {};
+                modalVisible.value = true;  // 弹出对话框
             };
 
             onMounted(() => {
@@ -186,11 +196,14 @@
                 columns,
                 loading,
                 handleTableChange,
+
                 modalVisible,
                 modalLoading,
-                edit,
                 handleModalOk,
-                ebook
+                ebook,
+
+                edit,
+                add
             }
         }
     });

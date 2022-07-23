@@ -233,3 +233,6 @@
 ##### 要点：
 * axios的post请求是"application/json"方式
 * 用json传输的post请求后端处理参数时要加入@RequestBody注解
+
+### 7-12
+* 增加雪花算法工具类，完成电子书新增功能

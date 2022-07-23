@@ -10,6 +10,7 @@ import org.abc.wiki.req.EbookSaveReq;
 import org.abc.wiki.resp.EbookQueryResp;
 import org.abc.wiki.resp.PageResp;
 import org.abc.wiki.util.CopyUtil;
+import org.abc.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ public class EbookService {
 
 	@Resource
 	private EbookMapper ebookMapper;
+
+	@Resource
+	private SnowFlake snowFlake;
 
 	/*
 	public List<Ebook> list(String name) {
@@ -83,7 +87,8 @@ public class EbookService {
 		Ebook ebook = CopyUtil.copy(req, Ebook.class);
 		if (ObjectUtils.isEmpty(req.getId())) {
 			// 新增
-			ebookMapper.insert(ebook);
+			ebook.setId(snowFlake.nextId());
+			ebookMapper.insertSelective(ebook);
 		} else {
 			// 更新，有id主键的就是更新"where id=?"
 			ebookMapper.updateByPrimaryKey(ebook);
