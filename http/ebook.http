@@ -6,7 +6,7 @@ GET http://localhost:5921/ebook/list?name=Oracle
 Accept: application/json
 
 ###
-GET http://localhost:5921/ebook/list?page=2&size=3
+GET http://localhost:5921/ebook/list?page=2&size=1000
 Accept: application/json
 
 ### 更新操作

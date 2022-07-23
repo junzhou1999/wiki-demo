@@ -1,12 +1,18 @@
 package org.abc.wiki.req;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.NotNull;
+
 // 请求的查询分页
 public class PageReq {
 
 	// 第几页
+	@NotNull(message = "【页码】不能为空")
 	private int page;
 
-	// 一页几行
+	// 一页几条
+	@NotNull(message = "【每页条数】不能为空")
+	@Max(value = 999, message = "【每页条数】不能超过999")
 	private int size;
 
 	public int getPage() {

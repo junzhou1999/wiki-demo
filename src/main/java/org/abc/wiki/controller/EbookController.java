@@ -9,6 +9,7 @@ import org.abc.wiki.service.EbookService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/ebook")
@@ -32,7 +33,7 @@ public class EbookController {
 	 * @param ebookQueryReq 只要类里边的名字跟前端传进来的参数匹配，Spring会自动映射
 	 */
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public CommonResp list(EbookQueryReq ebookQueryReq) {
+	public CommonResp list(@Valid EbookQueryReq ebookQueryReq) {
 		PageResp<EbookQueryResp> list = ebookService.list(ebookQueryReq);
 		CommonResp<PageResp<EbookQueryResp>> resp = new CommonResp<>();
 		resp.setContent(list);
