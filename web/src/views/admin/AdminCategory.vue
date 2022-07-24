@@ -4,16 +4,7 @@
                 :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
         >
             <p>
-                <a-form :model="queryParam" layout="inline">
-                    <a-form-item>
-                        <a-input-search
-                                v-model:value="queryParam.name"
-                                placeholder="名称"
-                                enter-button="查询"
-                                size="large"
-                                @search="handleQuery({page:1, size:pagination.pageSize, name:queryParam.name})"
-                        />
-                    </a-form-item>
+                <a-form layout="inline">
                     <a-form-item>
                         <a-button type="primary" @click="add()" size="large">
                             新增
@@ -26,7 +17,7 @@
                     :columns="columns"
                     :row-key="record => record.id"
                     :data-source="categorys"
-                    :pagination="pagination"
+                    :pagination="false"
                     :loading="loading"
                     @change="handleTableChange"
             >
@@ -86,11 +77,6 @@
         name: 'AdminCategory',
         setup() {
             const categorys = ref();
-            const pagination = ref({
-                current: 1,   // 当前页（动态）
-                pageSize: 3,  // 分页条数（静态）
-                total: 0      // 列表总数（动态）
-            });
             const loading = ref(false);
 
             const columns = [
@@ -115,23 +101,13 @@
             /**
              * 向后端指定分页参数查询获取，并获取后端确切的数据和分页参数
              **/
-            const handleQuery = (params: any) => {
+            const handleQuery = () => {
                 loading.value = true;
-                axios.get("/category/list", {
-                    params: {
-                        page: params.page,
-                        size: params.size,
-                        name: queryParam.value.name
-                    }
-                }).then((response) => {
+                axios.get("/category/all").then((response) => {
                     loading.value = false;
                     const data = response.data;
                     if (data.success) {
-                        categorys.value = data.content.list;
-
-                        // 重置分页按钮
-                        pagination.value.current = params.page;
-                        pagination.value.total = data.content.total;
+                        categorys.value = data.content;
                     } else {
                         message.error(data.message)
                     }
@@ -141,12 +117,8 @@
             /**
              * 表格点击页码时触发
              */
-            const handleTableChange = (pagination: any) => {
-                handleQuery({
-                    page: pagination.current,
-                    size: pagination.pageSize
-                    // 可以有其他参数
-                });
+            const handleTableChange = () => {
+                handleQuery();
             };
 
             // 表单
@@ -162,10 +134,7 @@
                         modalVisible.value = false;
 
                         // 刷新页面
-                        handleQuery({
-                            page: pagination.value.current,
-                            size: pagination.value.pageSize
-                        });
+                        handleQuery();
                     } else {
                         message.error(data.message)
                     }
@@ -192,28 +161,17 @@
                     const data = response.data;
                     if (data.success) {   // CommonResp.success
                         // 刷新页面
-                        handleQuery({
-                            page: pagination.value.current,
-                            size: pagination.value.pageSize
-                        });
+                        handleQuery();
                     }
                 });
             };
 
-            // 查询的参数
-            const queryParam = ref();
-            queryParam.value = {};
-
             onMounted(() => {
-                handleQuery({
-                    page: 1,
-                    size: pagination.value.pageSize
-                });  // 初始的时候也要查一次
+                handleQuery();  // 初始的时候也要查一次
             });
 
             return {
                 categorys,
-                pagination,
                 columns,
                 loading,
                 handleTableChange,
@@ -227,7 +185,6 @@
                 add,
                 handleDelete,
 
-                queryParam,
                 handleQuery
 
             }

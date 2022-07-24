@@ -54,6 +54,15 @@ public class CategoryService {
 		return pageResp;
 	}
 
+	// 一个性取出表内容
+	public List<CategoryQueryResp> all() {
+		CategoryExample categoryExample = new CategoryExample();
+		categoryExample.setOrderByClause("sort asc");  // 以排序字段显示
+		List<Category> categoryList = categoryMapper.selectByExample(categoryExample);
+		List<CategoryQueryResp> respList = CopyUtil.copyList(categoryList, CategoryQueryResp.class);
+		return respList;
+	}
+
 	/**
 	 * 更新和新增操作
 	 */
