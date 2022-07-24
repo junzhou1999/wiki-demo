@@ -30,29 +30,30 @@
                     :loading="loading"
                     @change="handleTableChange"
             >
-                <!-- 封面渲染，遍历数组里面的cover -->
-                <template #cover="{ text: cover }">
-                    <img v-if="cover" :src="cover" alt="avatar"/>
-                </template>
-                <!-- 按钮 -->
-                <template v-slot:action="{ text, record }">
-                    <!-- 按钮之间要有空格 -->
-                    <a-space size="small">
-                        <a-button type="primary" @click="edit(record)">
-                            编辑
-                        </a-button>
-                        <!-- 删除的确认框 -->
-                        <a-popconfirm
-                                title="删除后不可恢复，确认删除？"
-                                ok-text="确认"
-                                cancel-text="取消"
-                                @confirm="handleDelete(record.id)"
-                        >
-                            <a-button type="danger">
-                                删除
+                <template #bodyCell="{ column, record }">
+                    <!-- 封面渲染，遍历数组里面的cover -->
+                    <template v-if="column.key === 'cover'">
+                        <img :src="record.cover" alt="avatar">
+                    </template>
+                    <template v-else-if="column.key === 'action'">
+                        <!-- 按钮渲染 -->
+                        <a-space size="small">
+                            <a-button type="primary" @click="edit(record)">
+                                编辑
                             </a-button>
-                        </a-popconfirm>
-                    </a-space>
+                            <!-- 删除的确认框 -->
+                            <a-popconfirm
+                                    title="删除后不可恢复，确认删除？"
+                                    ok-text="确认"
+                                    cancel-text="取消"
+                                    @confirm="handleDelete(record.id)"
+                            >
+                                <a-button type="danger">
+                                    删除
+                                </a-button>
+                            </a-popconfirm>
+                        </a-space>
+                    </template>
                 </template>
             </a-table>
         </a-layout-content>
@@ -65,7 +66,7 @@
             :confirm-loading="modalLoading"
             @ok="handleModalOk"
     >
-        <a-form model="ebook" :label-col="{ span: 4 }" :wrapper-col="wrapperCol">
+        <a-form :model="ebook" :label-col="{ span:4,offset:0 }" :wrapper-col="{ span:8,span:22 }">
             <a-form-item label="名称">
                 <a-input v-model:value="ebook.name"/>
             </a-form-item>
@@ -106,38 +107,37 @@
                 {
                     title: '封面',
                     dataIndex: 'cover',
-                    slots: {customRender: 'cover'}   // 渲染封面
+                    key: 'cover',
                 },
                 {
                     title: '名称',
-                    dataIndex: 'name'
+                    dataIndex: 'name',
                 },
                 {
                     title: '分类一',
                     key: 'category1Id',       // 自定义设置的key
-                    dataIndex: 'category1Id'  // 数据项中对应的路径
+                    dataIndex: 'category1Id',  // 数据项中对应的路径
                 },
                 {
                     title: '分类二',
                     key: 'category2Id',
-                    dataIndex: 'category2Id'
+                    dataIndex: 'category2Id',
                 },
                 {
                     title: '文档数',
-                    dataIndex: 'docCount'
+                    dataIndex: 'docCount',
                 },
                 {
                     title: '阅读数',
-                    dataIndex: 'viewCount'
+                    dataIndex: 'viewCount',
                 },
                 {
                     title: '点赞数',
-                    dataIndex: 'voteCount'
+                    dataIndex: 'voteCount',
                 },
                 {
                     title: 'Action',
                     key: 'action',
-                    slots: {customRender: 'action'}
                 }
             ];
 
