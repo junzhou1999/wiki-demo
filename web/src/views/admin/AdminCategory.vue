@@ -16,10 +16,9 @@
             <a-table
                     :columns="columns"
                     :row-key="record => record.id"
-                    :data-source="categorys"
+                    :data-source="level1"
                     :pagination="false"
                     :loading="loading"
-                    @change="handleTableChange"
             >
                 <template #bodyCell="{ column, record }">
                     <template v-if="column.key === 'action'">
@@ -76,7 +75,7 @@
     export default defineComponent({
         name: 'AdminCategory',
         setup() {
-            const categorys = ref();
+            const level1 = ref();
             const loading = ref(false);
 
             const columns = [
@@ -98,16 +97,25 @@
                 }
             ];
 
+
             /**
-             * 向后端指定分页参数查询获取，并获取后端确切的数据和分页参数
-             **/
+             *  父: [{
+             *      属性: ..
+             *      children: [{
+             *         属性: ..
+             *         children: [{..}]
+             *      }]
+             *    }]
+             */
             const handleQuery = () => {
                 loading.value = true;
                 axios.get("/category/all").then((response) => {
                     loading.value = false;
                     const data = response.data;
                     if (data.success) {
-                        categorys.value = data.content;
+                        const categorys = data.content;
+                        level1.value = [];
+                        level1.value = Tool.array2Tree(categorys, 0);
                     } else {
                         message.error(data.message)
                     }
@@ -171,7 +179,7 @@
             });
 
             return {
-                categorys,
+                level1,
                 columns,
                 loading,
                 handleTableChange,

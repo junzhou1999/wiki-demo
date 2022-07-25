@@ -26,4 +26,30 @@ export class Tool {
             return JSON.parse(JSON.stringify(obj));
         }
     }
+
+    /**
+     * 递归将数组转换成树形结构
+     * @param array
+     * @param parentId
+     */
+    public static array2Tree(array: any, parentId: number) {
+        if (Tool.isEmpty(array)) {
+            return [];
+        }
+        const result = [];
+        for (let i = 0; i < array.length; i++) {
+            const c = array[i];
+            // 递归条件
+            if (Number(c.parent) === Number(parentId)) {
+                result.push(c);  // push了children对象和父属性
+
+                //递归查看当前节点对应的子节点
+                const children = Tool.array2Tree(array, c.id);
+                if (Tool.isNotEmpty(children)) {
+                    c.children = children;
+                }
+            }
+        }
+        return result;
+    }
 }
