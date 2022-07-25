@@ -57,7 +57,18 @@
                 <a-input v-model:value="category.name"/>
             </a-form-item>
             <a-form-item label="父分类">
-                <a-input-number v-model:value="category.parent" style="width: 100%" :min="0"/>
+                <a-select
+                        ref="select"
+                        v-model:value="category.parent"
+                >
+                    <a-select-option value="0">
+                        顶级分类
+                    </a-select-option>
+                    <!-- v-for"item in list key:"自定义的键" value:"传给后台的值" -->
+                    <a-select-option v-for="c in level1" :key="c.id" :value="c.id" :disabled="c.id === category.id">
+                        {{c.name}}
+                    </a-select-option>
+                </a-select>
             </a-form-item>
             <a-form-item label="排序">
                 <a-input-number v-model:value="category.sort" style="width: 100%" :min="1"/>
