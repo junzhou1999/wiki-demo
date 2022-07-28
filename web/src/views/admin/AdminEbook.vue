@@ -229,6 +229,12 @@
                         categorys = data.content;
                         level1.value = [];
                         level1.value = Tool.array2Tree(categorys, 0);
+
+                        // 加载完分类后再加载电子书，因为axios的请求是异步的
+                        handleQuery({
+                            page: 1,
+                            size: pagination.value.pageSize
+                        });
                     } else {
                         message.error(data.message)
                     }
@@ -272,10 +278,6 @@
             };
 
             onMounted(() => {
-                handleQuery({
-                    page: 1,
-                    size: pagination.value.pageSize
-                });  // 初始的时候也要查一次
                 handleQueryCategory();
             });
 

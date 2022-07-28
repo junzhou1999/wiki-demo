@@ -106,7 +106,6 @@
                         const categorys = data.content;
                         level1.value = [];
                         level1.value = Tool.array2Tree(categorys, 0);
-                        console.log("aaa " + JSON.stringify(level1.value));
                     } else {
                         message.error(data.message)
                     }
