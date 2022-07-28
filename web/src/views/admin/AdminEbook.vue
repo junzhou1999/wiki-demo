@@ -35,6 +35,9 @@
                     <template v-if="column.key === 'cover'">
                         <img :src="record.cover" alt="avatar">
                     </template>
+                    <template v-else-if="column.key === 'category'">
+                        <span>{{ getCategoryName(record.category1Id) }}/{{ getCategoryName(record.category2Id) }}</span>
+                    </template>
                     <template v-else-if="column.key === 'action'">
                         <!-- 按钮渲染 -->
                         <a-space size="small">
@@ -118,14 +121,9 @@
                     dataIndex: 'name',
                 },
                 {
-                    title: '分类一',
-                    key: 'category1Id',       // 自定义设置的key
-                    dataIndex: 'category1Id',  // 数据项中对应的路径
-                },
-                {
-                    title: '分类二',
-                    key: 'category2Id',
-                    dataIndex: 'category2Id',
+                    title: '分类',
+                    key: 'category',       // 自定义设置的key
+                    dataIndex: 'category',  // 数据项中对应的路径
                 },
                 {
                     title: '文档数',
@@ -221,13 +219,14 @@
 
             // 树形结构传给level1
             const level1 = ref();
+            let categorys: any;
             const handleQueryCategory = () => {
                 loading.value = true;
                 axios.get("/category/all").then((response) => {
                     loading.value = false;
                     const data = response.data;
                     if (data.success) {
-                        const categorys = data.content;
+                        categorys = data.content;
                         level1.value = [];
                         level1.value = Tool.array2Tree(categorys, 0);
                     } else {
@@ -260,6 +259,18 @@
             const queryParam = ref();
             queryParam.value = {};
 
+            const getCategoryName = (cid: number) => {
+                let result = "";
+                // 遍历对象
+                for (const key in categorys) {
+                    if (cid == categorys[key].id) {
+                        result = categorys[key].name;
+                        break;
+                    }
+                }
+                return result;
+            };
+
             onMounted(() => {
                 handleQuery({
                     page: 1,
@@ -288,7 +299,9 @@
                 handleQuery,
 
                 categoryIds,
-                level1
+                level1,
+
+                getCategoryName
             }
         }
     });
