@@ -3,8 +3,9 @@
         <a-layout-sider width="200" style="background: #fff">
             <a-menu :style="{ height: '100%', borderRight: 0 }"
                     mode="inline"
+                    @click="handleClick"
             >
-                <a-menu-item>
+                <a-menu-item key="welcome">
                     <template #icon>
                         <MailOutlined/>
                     </template>
@@ -35,8 +36,12 @@
         <a-layout-content
                 :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
         >
+            <div v-show="isShowWelcome" class="welcome">
+                <h1>欢迎使用junzhousky的电子书网页服务</h1>
+            </div>
             <!-- 取后端数据，电子书不多，不再分页，每行显示多个 -->
-            <a-list item-layout="vertical" size="large" :data-source="ebooks" :grid="{ gutter: 20, column: 3 }">
+            <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :data-source="ebooks"
+                    :grid="{ gutter: 20, column: 3 }">
                 <template #renderItem="{ item }">   <!-- ebooks给到item变量，循环遍历 -->
                     <a-list-item key="item.name">   <!-- 后端组件 -->
                         <template #actions>
@@ -112,11 +117,25 @@
                 });
             };
 
+            const isShowWelcome = ref(true);
+            const handleClick = (value: any) => {
+                // console.log('111 '+JSON.stringify(value));
+                // if (value.key == 'welcome') {
+                //     isShowWelcome.value = true;
+                // } else {
+                //     isShowWelcome.value = false;
+                // }
+                isShowWelcome.value = value.key == 'welcome';
+            };
+
             return {
                 ebooks,  //3
                 actions,
 
-                level1
+                level1,
+
+                handleClick,
+                isShowWelcome
             }
         }  // setup
     });
