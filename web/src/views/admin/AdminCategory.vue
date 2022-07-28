@@ -52,7 +52,7 @@
             :confirm-loading="modalLoading"
             @ok="handleModalOk"
     >
-        <a-form :model="category" :label-col="{ span:4,offset:0 }" :wrapper-col="{ span:8,span:22 }">
+        <a-form :model="category" :label-col="{ span:4 }" :wrapper-col="{ span:22 }">
             <a-form-item label="名称">
                 <a-input v-model:value="category.name"/>
             </a-form-item>
@@ -111,9 +111,13 @@
 
             /**
              *  父: [{
-             *      属性: ..
+             *      id:
+             *      name:
+             *      parent:
              *      children: [{
-             *         属性: ..
+             *         id:
+             *         name:
+             *         parent:
              *         children: [{..}]
              *      }]
              *    }]

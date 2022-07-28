@@ -66,18 +66,22 @@
             :confirm-loading="modalLoading"
             @ok="handleModalOk"
     >
-        <a-form :model="ebook" :label-col="{ span:4,offset:0 }" :wrapper-col="{ span:8,span:22 }">
+        <a-form :model="ebook" :label-col="{ span:4 }" :wrapper-col="{ span:22 }">
             <a-form-item label="名称">
                 <a-input v-model:value="ebook.name"/>
             </a-form-item>
             <a-form-item label="封面">
                 <a-input v-model:value="ebook.cover"/>
             </a-form-item>
-            <a-form-item label="分类一">
-                <a-input-number v-model:value="ebook.category1Id" style="width: 100%" :min="1"/>
-            </a-form-item>
-            <a-form-item label="分类二">
-                <a-input-number v-model:value="ebook.category2Id" style="width: 100%" :min="1"/>
+            <a-form-item label="分类">
+                <!-- 绑定的响应式变量（代表选中之后赋予的值） 数据来源 下拉框显示的值和对应的值 -->
+                <a-cascader
+                        v-model:value="categoryIds"
+                        :options="level1"
+                        :field-names="{label:'name', value:'id', children:'children'}"
+                        expand-trigger="hover"
+                        placeholder="Please select"
+                />
             </a-form-item>
             <a-form-item label="描述">
                 <a-input v-model:value="ebook.description"/>
@@ -181,9 +185,12 @@
             // 表单
             const modalVisible = ref<boolean>(false);
             const modalLoading = ref<boolean>(false);
+            const categoryIds = ref();
             const handleModalOk = () => {
                 modalLoading.value = true;
-                // axios.post："application/json"
+                ebook.value.category1Id = categoryIds.value[0];
+                ebook.value.category2Id = categoryIds.value[1];
+                // 把选择框的内容给到ebook
                 axios.post("/ebook/save", ebook.value).then((response) => {
                     const data = response.data;
                     modalLoading.value = false;   // 无论成功与否loading效果都要终止
@@ -201,12 +208,32 @@
                 });
             };
 
-            const ebook = ref({});
+            // 表单的ebook存储的值
+            const ebook = ref();
             // 编辑
             const edit = (record: any) => {
                 // 把表格中ebooks的数据项复制给新的变量ebook
                 ebook.value = Tool.copy(record);  // 复制多一个值，以免对原来record的引用进行修改
+                categoryIds.value = [];
+                categoryIds.value = [ebook.value.category1Id, ebook.value.category2Id];
                 modalVisible.value = true;  // 弹出对话框
+            };
+
+            // 树形结构传给level1
+            const level1 = ref();
+            const handleQueryCategory = () => {
+                loading.value = true;
+                axios.get("/category/all").then((response) => {
+                    loading.value = false;
+                    const data = response.data;
+                    if (data.success) {
+                        const categorys = data.content;
+                        level1.value = [];
+                        level1.value = Tool.array2Tree(categorys, 0);
+                    } else {
+                        message.error(data.message)
+                    }
+                });
             };
 
             // 新增
@@ -238,6 +265,7 @@
                     page: 1,
                     size: pagination.value.pageSize
                 });  // 初始的时候也要查一次
+                handleQueryCategory();
             });
 
             return {
@@ -257,8 +285,10 @@
                 handleDelete,
 
                 queryParam,
-                handleQuery
+                handleQuery,
 
+                categoryIds,
+                level1
             }
         }
     });
