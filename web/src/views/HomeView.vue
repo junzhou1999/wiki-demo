@@ -85,16 +85,6 @@
 
             onMounted(() => {
                 handleQueryCategory();
-                axios.get('/ebook/list', {
-                    params: {
-                        page: 1,
-                        size: 999
-                    }
-                }).then(
-                    (response) => {
-                        const data = response.data;
-                        ebooks.value = data.content.list;  //2，一定要取的是ref的.value
-                    });
             });  // onMounted
 
             const actions: Record<string, string>[] = [
@@ -118,14 +108,30 @@
             };
 
             const isShowWelcome = ref(true);
+            let categoryId2 = 0;
             const handleClick = (value: any) => {
-                // console.log('111 '+JSON.stringify(value));
-                // if (value.key == 'welcome') {
-                //     isShowWelcome.value = true;
-                // } else {
-                //     isShowWelcome.value = false;
-                // }
-                isShowWelcome.value = value.key == 'welcome';
+                if (value.key == 'welcome') {
+                    isShowWelcome.value = true;
+                } else {
+                    isShowWelcome.value = false;
+                    categoryId2 = value.key;
+                    handleQueryEbook();
+                }
+                // isShowWelcome.value = value.key == 'welcome';
+            };
+
+            const handleQueryEbook = () => {
+                axios.get('/ebook/list', {
+                    params: {
+                        page: 1,
+                        size: 999,
+                        category2Id: categoryId2  // category2Id要映射到请求类
+                    }
+                }).then(
+                    (response) => {
+                        const data = response.data;
+                        ebooks.value = data.content.list;
+                    });
             };
 
             return {

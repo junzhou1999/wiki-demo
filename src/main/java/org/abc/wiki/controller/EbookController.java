@@ -33,8 +33,8 @@ public class EbookController {
 	 * @param ebookQueryReq 只要类里边的名字跟前端传进来的参数匹配，Spring会自动映射
 	 */
 	@RequestMapping(value = "/list", method = RequestMethod.GET)
-	public CommonResp list(@Valid EbookQueryReq ebookQueryReq) {
-		PageResp<EbookQueryResp> list = ebookService.list(ebookQueryReq);
+	public CommonResp list(@Valid EbookQueryReq req) {
+		PageResp<EbookQueryResp> list = ebookService.list(req);
 		CommonResp<PageResp<EbookQueryResp>> resp = new CommonResp<>();
 		resp.setContent(list);
 		return resp;

@@ -42,19 +42,21 @@ public class EbookService {
 	}
 	*/
 
-	public PageResp<EbookQueryResp> list(EbookQueryReq ebookQueryReq) {
+	public PageResp<EbookQueryResp> list(EbookQueryReq req) {
 		EbookExample ebookExample = new EbookExample();
 		// where条件类
 		EbookExample.Criteria criteria = ebookExample.createCriteria();
 		ebookExample.setOrderByClause("id");   // PostreSQL更新完后顺序会改变的
 		// 模糊查询条件，动态SQL语句
-		if (!ObjectUtils.isEmpty(ebookQueryReq.getName())) {
-			criteria.andNameLike("%" + ebookQueryReq.getName() + "%");
+		if (!ObjectUtils.isEmpty(req.getName())) {
+			criteria.andNameLike("%" + req.getName() + "%");
 		}
-
+		if (!ObjectUtils.isEmpty(req.getCategory2Id())) {
+			criteria.andCategory2IdEqualTo(req.getCategory2Id());
+		}
 		// 第几页，每页几个数据项，分页和查询之间如果有其他的select语句，会使得分页效果失效
-		if (ebookQueryReq.getPage() != 0 && ebookQueryReq.getSize() != 0) {
-			PageHelper.startPage(ebookQueryReq.getPage(), ebookQueryReq.getSize());
+		if (req.getPage() != 0 && req.getSize() != 0) {
+			PageHelper.startPage(req.getPage(), req.getSize());
 		}
 		List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
 		PageInfo<Object> pageInfo = new PageInfo<>(ebookList);
