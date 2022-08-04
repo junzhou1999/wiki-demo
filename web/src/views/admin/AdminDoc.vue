@@ -32,7 +32,7 @@
                                     title="删除后不可恢复，确认删除？"
                                     ok-text="确认"
                                     cancel-text="取消"
-                                    @confirm="handleDelete(record.id)"
+                                    @confirm="showConfirm(record.id)"
                             >
                                 <a-button type="danger">
                                     删除
@@ -79,11 +79,12 @@
 </template>
 
 <script lang="ts">
-    import {defineComponent, onMounted, ref} from 'vue';
+    import {defineComponent, onMounted, ref, createVNode} from 'vue';
     import axios from 'axios';
-    import {message} from "ant-design-vue";
+    import {message, Modal} from "ant-design-vue";
     import {Tool} from "@/util/tool";
     import {useRoute} from "vue-router";
+    import WarningOutlined from "@ant-design/icons-vue/WarningOutlined";
 
     export default defineComponent({
         name: 'AdminDoc',
@@ -230,7 +231,8 @@
                 }
             };
 
-            const delIds: Array<string> = [];
+            const delIds: Array<string> = [];  // 要删除的文档名称
+            const names: Array<string> = [];   // 要删除的文档id
             const getDelIds = (treeSelectData: any, id: any) => {
                 //遍历数组，即遍历某一层节点
                 for (let i = 0; i < treeSelectData.length; i++) {
@@ -240,6 +242,7 @@
                         console.log("delete", node);
                         // 加入到结果集
                         delIds.push(id);
+                        names.push(node.name);
 
                         //遍历所有节点
                         const children = node.children;
@@ -258,9 +261,26 @@
                 }
             };
 
+            // 删除前的二次确认
+            const showConfirm = (id: number) => {
+                delIds.length = 0;  // 先清空存储器数据
+                names.length = 0;
+                getDelIds(level1.value, id);
+                Modal.confirm({
+                    title: '重要提醒！',
+                    icon: createVNode(WarningOutlined),
+                    content: '将删除【' + names.join(', ') + '】，此操作将不可恢复！',
+                    onOk() {
+                        handleDelete(id);
+                    },
+                    // eslint-disable-next-line @typescript-eslint/no-empty-function
+                    onCancel() {
+                    },
+                });
+            };
+
             // 删除
             const handleDelete = (id: number) => {
-                getDelIds(level1.value, id);
                 axios.delete("/doc/delete/" + delIds.join(',')).then((response) => {
                     const data = response.data;
                     if (data.success) {   // CommonResp.success
@@ -288,7 +308,7 @@
                 edit,
                 add,
                 treeSelectData,
-                handleDelete,
+                showConfirm,
 
                 handleQuery
 
