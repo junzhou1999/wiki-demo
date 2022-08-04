@@ -83,10 +83,14 @@
     import axios from 'axios';
     import {message} from "ant-design-vue";
     import {Tool} from "@/util/tool";
+    import {useRoute} from "vue-router";
 
     export default defineComponent({
         name: 'AdminDoc',
         setup() {
+            // 获取路由信息
+            const route = useRoute();
+
             const level1 = ref();
             const loading = ref(false);
 
@@ -186,12 +190,16 @@
 
             // 新增
             const add = () => {
-                doc.value = {};
+                // 编辑的时候doc会拿到ebookId的值，而新增的时候没有
+                doc.value = {
+                    ebookId: route.query.ebookId
+                };
                 modalVisible.value = true;  // 弹出对话框
 
                 // 修正数据源和插入顶级文档选项
                 treeSelectData.value = Tool.copy(level1.value);
                 treeSelectData.value.unshift({id: 0, name: '顶级文档'});
+
             };
 
             const setDisable = (treeSelectData: any, id: any) => {
