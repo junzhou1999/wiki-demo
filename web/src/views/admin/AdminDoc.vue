@@ -74,20 +74,40 @@
             <a-form-item label="排序">
                 <a-input-number v-model:value="doc.sort" style="width: 100%" :min="1"/>
             </a-form-item>
+            <a-form-item label="文档">
+                <div style="border: 1px solid #ccc">
+                    <Toolbar
+                            style="border-bottom: 1px solid #ccc"
+                            :editor="editorRef"
+                            :defaultConfig="toolbarConfig"
+                            mode="default"
+                    />
+                    <Editor
+                            style="height: 500px; overflow-y: hidden;"
+                            v-model="valueHtml"
+                            :defaultConfig="editorConfig"
+                            mode="default"
+                            @onCreated="handleCreated"
+                    />
+                </div>
+            </a-form-item>
         </a-form>
     </a-modal>
 </template>
 
 <script lang="ts">
-    import {defineComponent, onMounted, ref, createVNode} from 'vue';
+    import {defineComponent, onMounted, ref, createVNode, onBeforeUnmount, shallowRef} from 'vue';
     import axios from 'axios';
     import {message, Modal} from "ant-design-vue";
     import {Tool} from "@/util/tool";
     import {useRoute} from "vue-router";
     import WarningOutlined from "@ant-design/icons-vue/WarningOutlined";
+    import '@wangeditor/editor/dist/css/style.css'; // 引入 css
+    import {Editor, Toolbar} from '@wangeditor/editor-for-vue';
 
     export default defineComponent({
         name: 'AdminDoc',
+        components: {Editor, Toolbar},
         setup() {
             // 获取路由信息
             const route = useRoute();
@@ -156,6 +176,21 @@
             treeSelectData.value = [];
             const modalVisible = ref<boolean>(false);
             const modalLoading = ref<boolean>(false);
+
+            // wangEditor变量
+            const editorRef = shallowRef();
+            const valueHtml = ref();  // 内容HTML
+            const toolbarConfig = {};
+            const editorConfig = {placeholder: '请输入内容...'};
+            onBeforeUnmount(() => {  // 组件销毁时，也及时销毁编辑器
+                const editor = editorRef.value;
+                if (editor == null) return;
+                editor.destroy();
+            });
+            const handleCreated = (editor: any) => {
+                editorRef.value = editor; // 记录 editor 实例，重要！
+            };
+
             const handleModalOk = () => {
                 modalLoading.value = true;
                 // axios.post："application/json"
@@ -271,7 +306,7 @@
                     icon: createVNode(WarningOutlined),
                     content: '将删除【' + names.join(', ') + '】，此操作将不可恢复！',
                     onOk() {
-                        handleDelete(id);
+                        handleDelete();
                     },
                     // eslint-disable-next-line @typescript-eslint/no-empty-function
                     onCancel() {
@@ -280,7 +315,7 @@
             };
 
             // 删除
-            const handleDelete = (id: number) => {
+            const handleDelete = () => {
                 axios.delete("/doc/delete/" + delIds.join(',')).then((response) => {
                     const data = response.data;
                     if (data.success) {   // CommonResp.success
@@ -310,7 +345,13 @@
                 treeSelectData,
                 showConfirm,
 
-                handleQuery
+                handleQuery,
+
+                editorRef,
+                valueHtml,
+                toolbarConfig,
+                editorConfig,
+                handleCreated
 
             }
         }

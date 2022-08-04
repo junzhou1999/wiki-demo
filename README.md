@@ -327,3 +327,8 @@
 
 ### 9-6
 * 文档表删除前再添加一个Modal对话框
+
+### 9-7
+* 编辑和新增表单添加WangEditor富文本框
+* npm install @wangeditor/editor --save
+* npm install @wangeditor/editor-for-vue@next --save
