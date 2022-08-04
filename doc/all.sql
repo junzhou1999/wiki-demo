@@ -159,6 +159,7 @@ select *
 from T_CATEGORY;
 
 -- 文档表
+drop table if exists T_DOC;
 create table T_DOC
 (
     "id"         bigint      not null,
@@ -184,4 +185,11 @@ values (5, 1, 3, '文档2.2', 2, 0, 0);
 insert into T_DOC (id, ebook_id, parent, name, sort, view_count, vote_count)
 values (6, 1, 5, '文档2.2.1', 1, 0, 0);
 
-
+-- 文档内容表
+drop table if exists T_CONTENT;
+create table T_CONTENT
+(
+    "id"      bigint not null, -- 同文档表id，可以看作分表操作
+    "content" text   not null, -- 文档内容文本（HTML）
+    constraint PK_CONTENT primary key ("id")
+);

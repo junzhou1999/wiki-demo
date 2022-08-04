@@ -39,6 +39,7 @@
         <!-- <table schema="public" tableName="T_DEMO" domainObjectName="Demo"/>-->
         <!-- <table schema="public" tableName="T_EBOOK" domainObjectName="Ebook"/>-->
         <!-- <table schema="public" tableName="T_CATEGORY" domainObjectName="Category"/>-->
-        <table schema="public" tableName="T_DOC" domainObjectName="Doc"/>
+        <!-- <table schema="public" tableName="T_DOC" domainObjectName="Doc"/>-->
+        <table schema="public" tableName="T_CONTENT" domainObjectName="Content"/>
     </context>
 </generatorConfiguration>

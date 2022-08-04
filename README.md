@@ -332,3 +332,6 @@
 * 编辑和新增表单添加WangEditor富文本框
 * npm install @wangeditor/editor --save
 * npm install @wangeditor/editor-for-vue@next --save
+
+### 9-8
+* 生成文档内容表的持久层
