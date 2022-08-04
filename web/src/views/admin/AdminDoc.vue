@@ -230,9 +230,38 @@
                 }
             };
 
+            const delIds: Array<string> = [];
+            const getDelIds = (treeSelectData: any, id: any) => {
+                //遍历数组，即遍历某一层节点
+                for (let i = 0; i < treeSelectData.length; i++) {
+                    const node = treeSelectData[i];
+                    if (node.id === id) {
+                        //如果当前节点就是目标节点
+                        console.log("delete", node);
+                        // 加入到结果集
+                        delIds.push(id);
+
+                        //遍历所有节点
+                        const children = node.children;
+                        if (Tool.isNotEmpty(children)) {
+                            for (let j = 0; j < children.length; j++) {
+                                getDelIds(children, children[j].id);
+                            }
+                        }
+                    } else {
+                        //如果当前节点不是目标节点，则到子节点在找找看
+                        const children = node.children;
+                        if (Tool.isNotEmpty(children)) {
+                            getDelIds(children, id);
+                        }
+                    }
+                }
+            };
+
             // 删除
             const handleDelete = (id: number) => {
-                axios.delete("/doc/delete/" + id).then((response) => {
+                getDelIds(level1.value, id);
+                axios.delete("/doc/delete/" + delIds.join(',')).then((response) => {
                     const data = response.data;
                     if (data.success) {   // CommonResp.success
                         // 刷新页面

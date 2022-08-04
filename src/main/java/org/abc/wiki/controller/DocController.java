@@ -2,14 +2,16 @@ package org.abc.wiki.controller;
 
 import org.abc.wiki.req.DocQueryReq;
 import org.abc.wiki.req.DocSaveReq;
-import org.abc.wiki.resp.DocQueryResp;
 import org.abc.wiki.resp.CommonResp;
+import org.abc.wiki.resp.DocQueryResp;
 import org.abc.wiki.resp.PageResp;
 import org.abc.wiki.service.DocService;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -45,10 +47,16 @@ public class DocController {
 		return resp;
 	}
 
-	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
-	public CommonResp delete(@PathVariable Long id) {
-		docService.delete(id);
+	@RequestMapping(value = "/delete/{strIds}", method = RequestMethod.DELETE)
+	public CommonResp delete(@PathVariable String strIds) {
 		CommonResp resp = new CommonResp();
+		if (ObjectUtils.isEmpty(strIds)) {
+			resp.setSuccess(false);
+			resp.setMessage("删除编号不能为空！");
+			return resp;
+		}
+		List<String> list = Arrays.asList(strIds.split(","));
+		docService.delete(list);
 		return resp;
 	}
 }
