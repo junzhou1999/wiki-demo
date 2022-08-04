@@ -57,18 +57,19 @@
                 <a-input v-model:value="doc.name"/>
             </a-form-item>
             <a-form-item label="父文档">
-                <a-select
-                        ref="select"
+                <a-tree-select
                         v-model:value="doc.parent"
+                        show-search
+                        style="width: 100%"
+                        :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                        placeholder="Please select"
+                        allow-clear
+                        tree-default-expand-all
+                        :tree-data="treeSelectData"
+                        :fieldNames="{label:'name', key: 'id', value: 'id'}"
                 >
-                    <a-select-option value="0">
-                        顶级文档
-                    </a-select-option>
-                    <!-- v-for"item in list key:"自定义的键" value:"传给后台的值" -->
-                    <a-select-option v-for="c in level1" :key="c.id" :value="c.id" :disabled="c.id === doc.id">
-                        {{c.name}}
-                    </a-select-option>
-                </a-select>
+                    <!-- 注意上边的value填的应该是要修改或新增的id -->
+                </a-tree-select>
             </a-form-item>
             <a-form-item label="排序">
                 <a-input-number v-model:value="doc.sort" style="width: 100%" :min="1"/>
@@ -129,6 +130,7 @@
                     const data = response.data;
                     if (data.success) {
                         const docs = data.content;
+                        // 先清空数据再执行查询
                         level1.value = [];
                         level1.value = Tool.array2Tree(docs, 0);
                     } else {
@@ -145,6 +147,8 @@
             };
 
             // 表单
+            const treeSelectData = ref();
+            treeSelectData.value = [];
             const modalVisible = ref<boolean>(false);
             const modalLoading = ref<boolean>(false);
             const handleModalOk = () => {
@@ -170,12 +174,52 @@
                 // 把表格中docs的数据项复制给新的变量doc
                 doc.value = Tool.copy(record);  // 复制多一个值，以免对原来record的引用进行修改
                 modalVisible.value = true;  // 弹出对话框
+
+                // 自身和子文档不可以作为自身的父文档
+                treeSelectData.value = Tool.copy(level1.value);
+                setDisable(treeSelectData.value, record.id);
+
+                // 插入顶级文档选项
+                treeSelectData.value.unshift({id: 0, name: '顶级文档'});
+
             };
 
             // 新增
             const add = () => {
                 doc.value = {};
                 modalVisible.value = true;  // 弹出对话框
+
+                // 修正数据源和插入顶级文档选项
+                treeSelectData.value = Tool.copy(level1.value);
+                treeSelectData.value.unshift({id: 0, name: '顶级文档'});
+            };
+
+            const setDisable = (treeSelectData: any, id: any) => {
+                console.log(JSON.stringify(treeSelectData));
+                //遍历数组，即遍历某一层节点
+                for (let i = 0; i < treeSelectData.length; i++) {
+                    const node = treeSelectData[i];
+                    if (node.id === id) {
+                        //如果当前节点就是目标节点
+                        console.log("disabled", node);
+                        //将目标节点设置为disabled
+                        node.disabled = true;
+
+                        //遍历所有节点，将所有节点全部加上disabled
+                        const children = node.children;
+                        if (Tool.isNotEmpty(children)) {
+                            for (let j = 0; j < children.length; j++) {
+                                setDisable(children, children[j].id);
+                            }
+                        }
+                    } else {
+                        //如果当前节点不是目标节点，则到子节点在找找看
+                        const children = node.children;
+                        if (Tool.isNotEmpty(children)) {
+                            setDisable(children, id);
+                        }
+                    }
+                }
             };
 
             // 删除
@@ -206,6 +250,7 @@
 
                 edit,
                 add,
+                treeSelectData,
                 handleDelete,
 
                 handleQuery
