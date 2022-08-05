@@ -2,8 +2,10 @@ package org.abc.wiki.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.abc.wiki.domain.Content;
 import org.abc.wiki.domain.Doc;
 import org.abc.wiki.domain.DocExample;
+import org.abc.wiki.mapper.ContentMapper;
 import org.abc.wiki.mapper.DocMapper;
 import org.abc.wiki.req.DocQueryReq;
 import org.abc.wiki.req.DocSaveReq;
@@ -27,6 +29,9 @@ public class DocService {
 
 	@Resource
 	private DocMapper docMapper;
+
+	@Resource
+	private ContentMapper contentMapper;
 
 	@Resource
 	private SnowFlake snowFlake;
@@ -68,13 +73,21 @@ public class DocService {
 	 */
 	public void save(DocSaveReq req) {
 		Doc doc = CopyUtil.copy(req, Doc.class);
+		Content content = CopyUtil.copy(req, Content.class);  // 复制id和content文档内容
 		if (ObjectUtils.isEmpty(req.getId())) {
 			// 新增
 			doc.setId(snowFlake.nextId());
 			docMapper.insertSelective(doc);
+			content.setId(doc.getId());  // 两张表共用一个id
+			contentMapper.insert(content);
 		} else {
 			// 更新，有id主键的就是更新"where id=?"
 			docMapper.updateByPrimaryKey(doc);
+			// 如果更新不了，代表文档表还没有内容，那就新建一个
+			if (contentMapper.updateByPrimaryKey(content) == 0) {
+				// 新增文档内容
+				contentMapper.insert(content);
+			}
 		}
 	}
 

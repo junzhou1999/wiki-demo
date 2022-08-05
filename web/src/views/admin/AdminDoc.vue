@@ -205,7 +205,11 @@
                 editorRef.value = editor; // 记录 editor 实例，重要！
             };
 
+            const doc = ref();
+            doc.value = {};
             const handleSave = () => {
+                const editor = editorRef.value;  // 获取editor
+                doc.value.content = editor.getHtml();
                 modalLoading.value = true;
                 // axios.post："application/json"
                 axios.post("/doc/save", doc.value).then((response) => {
@@ -222,7 +226,6 @@
                 });
             };
 
-            const doc = ref({});
             // 编辑
             const edit = (record: any) => {
                 // 把表格中docs的数据项复制给新的变量doc
