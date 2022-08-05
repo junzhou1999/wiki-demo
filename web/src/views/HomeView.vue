@@ -40,19 +40,21 @@
                 <h1>欢迎使用junzhousky的电子书网页服务</h1>
             </div>
             <!-- 取后端数据，电子书不多，不再分页，每行显示多个 -->
-            <a-list v-show="!isShowWelcome" item-layout="vertical" size="large" :data-source="ebooks"
-                    :grid="{ gutter: 20, column: 3 }">
+            <a-list v-show="!isShowWelcome" item-layout="vertical" size="large"
+                    :data-source="ebooks" :grid="{ gutter: 20, column: 3 }">
                 <template #renderItem="{ item }">   <!-- ebooks给到item变量，循环遍历 -->
                     <a-list-item key="item.name">   <!-- 后端组件 -->
                         <template #actions>
-          <span v-for="{ type, text } in actions" :key="type">
-            <component :is="type" style="margin-right: 8px"/>
-            {{ text }}   <!-- 点赞收藏文字 -->
-          </span>
+                            <span v-for="{ type, text } in actions" :key="type">
+                                <component :is="type" style="margin-right: 8px"/>
+                                {{ text }}   <!-- 点赞收藏文字 -->
+                            </span>
                         </template>
                         <a-list-item-meta :description="item.description">   <!-- 描述 -->
                             <template #title>
-                                <a :href="item.href">{{ item.name }}</a>
+                                <router-link :to="'/doc?ebookId=' + item.id">
+                                    {{ item.name }}
+                                </router-link>
                             </template>
                             <template #avatar>
                                 <a-avatar :src="item.cover"/>    <!-- 图标 -->
