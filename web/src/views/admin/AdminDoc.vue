@@ -148,8 +148,35 @@
                 }
             ];
 
-
             /**
+             * 表格点击页码时触发
+             */
+            const handleTableChange = () => {
+                handleQuery();
+            };
+
+            // 表单
+            const treeSelectData = ref();
+            treeSelectData.value = [];
+
+            // wangEditor变量
+            const editorRef = shallowRef();
+            const valueHtml = ref();  // 内容HTML
+            const toolbarConfig = {};
+            const editorConfig = {placeholder: '请输入文档内容...'};
+            onBeforeUnmount(() => {  // 组件销毁时，也及时销毁编辑器
+                const editor = editorRef.value;  // 获取editor
+                if (editor == null) return;
+                editor.destroy();
+            });
+            const handleCreated = (editor: any) => {
+                editorRef.value = editor; // 记录 editor 实例，重要！
+            };
+
+            const doc = ref();  // 编辑或新增需要存储的文档信息变量
+            doc.value = {};
+            /**
+             * 查询文档表，并转换成树形数组
              *  父: [{
              *      id:
              *      name:
@@ -179,45 +206,28 @@
             };
 
             /**
-             * 表格点击页码时触发
+             * 查询文档内容表，并给到前端WangEditor
              */
-            const handleTableChange = () => {
-                handleQuery();
+            const handleQueryContent = () => {
+                axios.get("/doc/find-content/" + doc.value.id).then((response) => {
+                    const data = response.data;
+                    const editor = editorRef.value;  // 获取editor
+                    if (data.success) {
+                        editor.setHtml(data.content);
+                    } else {
+                        message.error(data.message)
+                    }
+                });
             };
 
-            // 表单
-            const treeSelectData = ref();
-            treeSelectData.value = [];
-            const modalVisible = ref<boolean>(false);
-            const modalLoading = ref<boolean>(false);
-
-            // wangEditor变量
-            const editorRef = shallowRef();
-            const valueHtml = ref();  // 内容HTML
-            const toolbarConfig = {};
-            const editorConfig = {placeholder: '请输入文档内容...'};
-            onBeforeUnmount(() => {  // 组件销毁时，也及时销毁编辑器
-                const editor = editorRef.value;
-                if (editor == null) return;
-                editor.destroy();
-            });
-            const handleCreated = (editor: any) => {
-                editorRef.value = editor; // 记录 editor 实例，重要！
-            };
-
-            const doc = ref();
-            doc.value = {};
             const handleSave = () => {
                 const editor = editorRef.value;  // 获取editor
                 doc.value.content = editor.getHtml();
-                modalLoading.value = true;
                 // axios.post："application/json"
                 axios.post("/doc/save", doc.value).then((response) => {
                     const data = response.data;
-                    modalLoading.value = false;   // 无论成功与否loading效果都要终止
                     if (data.success) {
-                        modalVisible.value = false;
-
+                        message.success('保存成功！');
                         // 刷新页面
                         handleQuery();
                     } else {
@@ -228,9 +238,12 @@
 
             // 编辑
             const edit = (record: any) => {
+                const editor = editorRef.value;  // 获取editor
+                // 先清空富文本框
+                editor.setHtml('');
                 // 把表格中docs的数据项复制给新的变量doc
                 doc.value = Tool.copy(record);  // 复制多一个值，以免对原来record的引用进行修改
-                modalVisible.value = true;  // 弹出对话框
+                handleQueryContent();
 
                 // 自身和子文档不可以作为自身的父文档
                 treeSelectData.value = Tool.copy(level1.value);
@@ -243,11 +256,13 @@
 
             // 新增
             const add = () => {
+                const editor = editorRef.value;  // 获取editor
+                // 先清空富文本框
+                editor.setHtml('');
                 // 编辑的时候doc会拿到ebookId的值，而新增的时候没有
                 doc.value = {
                     ebookId: route.query.ebookId
                 };
-                modalVisible.value = true;  // 弹出对话框
 
                 // 修正数据源和插入顶级文档选项
                 treeSelectData.value = Tool.copy(level1.value);
@@ -352,8 +367,6 @@
                 loading,
                 handleTableChange,
 
-                modalVisible,
-                modalLoading,
                 handleSave,
                 doc,
 
