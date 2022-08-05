@@ -4,7 +4,7 @@
         <a-layout-content
                 :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
         >
-            <a-row>
+            <a-row :gutter="16">
                 <a-col :span="8">
                     <p>
                         <a-form layout="inline">
@@ -22,11 +22,13 @@
                     </p>
                     <!-- 表格 -->
                     <a-table
+                            v-if="level1.length > 0"
                             :columns="columns"
                             :row-key="record => record.id"
                             :data-source="level1"
                             :pagination="false"
                             :loading="loading"
+                            :defaultExpandAllRows="true"
                     >
                         <template #bodyCell="{ column, record }">
                             <template v-if="column.key === 'action'">
@@ -48,6 +50,9 @@
                                     </a-popconfirm>
                                 </a-space>
                             </template>
+                            <template v-if="column.key === 'name'">
+                                {{record.sort}} {{record.name}}
+                            </template>
                         </template>
                     </a-table>
                 </a-col>
@@ -63,7 +68,7 @@
                             </a-form-item>
                         </a-form>
                     </p>
-                    <a-form :model="doc">
+                    <a-form :model="doc" layout="vertical">
                         <a-form-item>
                             <a-input v-model:value="doc.name" placeholder="请输入名称"/>
                         </a-form-item>
@@ -127,21 +132,15 @@
             // 获取路由信息
             const route = useRoute();
 
-            const level1 = ref();
+            const level1 = ref();  // null，一级文档树，children属性就是二级文档
+            level1.value = [];  // []，初始化时赋值一个空数组，为了解决v-if level1.length为空时发生报错。
             const loading = ref(false);
 
             const columns = [
                 {
                     title: '名称',
                     dataIndex: 'name',
-                },
-                {
-                    title: '父文档',
-                    dataIndex: 'parent',
-                },
-                {
-                    title: '排序',
-                    dataIndex: 'sort',
+                    key: 'name',
                 },
                 {
                     title: 'Action',
