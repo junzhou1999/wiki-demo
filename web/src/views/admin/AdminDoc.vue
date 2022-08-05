@@ -1,98 +1,113 @@
 <template>
     <a-layout>
+
         <a-layout-content
                 :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
         >
-            <p>
-                <a-form layout="inline">
-                    <a-form-item>
-                        <a-button type="primary" @click="add()" size="large">
-                            新增
-                        </a-button>
-                    </a-form-item>
-                </a-form>
-            </p>
-            <!-- 表格 -->
-            <a-table
-                    :columns="columns"
-                    :row-key="record => record.id"
-                    :data-source="level1"
-                    :pagination="false"
-                    :loading="loading"
-            >
-                <template #bodyCell="{ column, record }">
-                    <template v-if="column.key === 'action'">
-                        <!-- 按钮渲染 -->
-                        <a-space size="small">
-                            <a-button type="primary" @click="edit(record)">
-                                编辑
-                            </a-button>
-                            <!-- 删除的确认框 -->
-                            <a-popconfirm
-                                    title="删除后不可恢复，确认删除？"
-                                    ok-text="确认"
-                                    cancel-text="取消"
-                                    @confirm="showConfirm(record.id)"
-                            >
-                                <a-button type="danger">
-                                    删除
+            <a-row>
+                <a-col :span="8">
+                    <p>
+                        <a-form layout="inline">
+                            <a-form-item>
+                                <a-button type="primary" @click="handleQuery()" size="large">
+                                    刷新
                                 </a-button>
-                            </a-popconfirm>
-                        </a-space>
-                    </template>
-                </template>
-            </a-table>
+                            </a-form-item>
+                            <a-form-item>
+                                <a-button type="primary" @click="add()" size="large">
+                                    新增
+                                </a-button>
+                            </a-form-item>
+                        </a-form>
+                    </p>
+                    <!-- 表格 -->
+                    <a-table
+                            :columns="columns"
+                            :row-key="record => record.id"
+                            :data-source="level1"
+                            :pagination="false"
+                            :loading="loading"
+                    >
+                        <template #bodyCell="{ column, record }">
+                            <template v-if="column.key === 'action'">
+                                <!-- 按钮渲染 -->
+                                <a-space size="small">
+                                    <a-button type="primary" @click="edit(record)">
+                                        编辑
+                                    </a-button>
+                                    <!-- 删除的确认框 -->
+                                    <a-popconfirm
+                                            title="删除后不可恢复，确认删除？"
+                                            ok-text="确认"
+                                            cancel-text="取消"
+                                            @confirm="showConfirm(record.id)"
+                                    >
+                                        <a-button type="danger">
+                                            删除
+                                        </a-button>
+                                    </a-popconfirm>
+                                </a-space>
+                            </template>
+                        </template>
+                    </a-table>
+                </a-col>
+                <a-col :span="16">
+                    <p>
+                        <a-form layout="inline">
+                            <a-form-item>
+                                <a-tooltip title="确保点击左侧编辑或者新增按钮后再进行文档保存！" color="purple" placement="right">
+                                    <a-button type="primary" @click="handleSave" size="large">
+                                        保存
+                                    </a-button>
+                                </a-tooltip>
+                            </a-form-item>
+                        </a-form>
+                    </p>
+                    <a-form :model="doc">
+                        <a-form-item>
+                            <a-input v-model:value="doc.name" placeholder="请输入名称"/>
+                        </a-form-item>
+                        <a-form-item>
+                            <a-tree-select
+                                    v-model:value="doc.parent"
+                                    show-search
+                                    style="width: 100%"
+                                    :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                                    placeholder="请选择父文档"
+                                    allow-clear
+                                    tree-default-expand-all
+                                    :tree-data="treeSelectData"
+                                    :fieldNames="{label:'name', key: 'id', value: 'id'}"
+                            >
+                                <!-- 注意上边的value填的应该是要修改或新增的id -->
+                            </a-tree-select>
+                        </a-form-item>
+                        <a-form-item>
+                            <a-input-number v-model:value="doc.sort" style="width: 100%" :min="1" placeholder="请选择排序"/>
+                        </a-form-item>
+                        <a-form-item>
+                            <div style="border: 1px solid #ccc">
+                                <Toolbar
+                                        style="border-bottom: 1px solid #ccc"
+                                        :editor="editorRef"
+                                        :defaultConfig="toolbarConfig"
+                                        mode="default"
+                                />
+                                <Editor
+                                        style="height: 500px; overflow-y: hidden;"
+                                        v-model="valueHtml"
+                                        :defaultConfig="editorConfig"
+                                        mode="default"
+                                        @onCreated="handleCreated"
+                                />
+                            </div>
+                        </a-form-item>
+                    </a-form>
+                </a-col>
+            </a-row>
+
         </a-layout-content>
     </a-layout>
-
-    <!-- 对话框，内含表单 -->
-    <a-modal
-            v-model:visible="modalVisible"
-            title="文档表单"
-            :confirm-loading="modalLoading"
-            @ok="handleModalOk"
-    >
-        <a-form :model="doc" :label-col="{ span:4 }" :wrapper-col="{ span:22 }">
-            <a-form-item label="名称">
-                <a-input v-model:value="doc.name"/>
-            </a-form-item>
-            <a-form-item label="父文档">
-                <a-tree-select
-                        v-model:value="doc.parent"
-                        show-search
-                        style="width: 100%"
-                        :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-                        placeholder="Please select"
-                        allow-clear
-                        tree-default-expand-all
-                        :tree-data="treeSelectData"
-                        :fieldNames="{label:'name', key: 'id', value: 'id'}"
-                >
-                    <!-- 注意上边的value填的应该是要修改或新增的id -->
-                </a-tree-select>
-            </a-form-item>
-            <a-form-item label="排序">
-                <a-input-number v-model:value="doc.sort" style="width: 100%" :min="1"/>
-            </a-form-item>
-            <a-form-item label="文档">
-                <div style="border: 1px solid #ccc">
-                    <Toolbar
-                            style="border-bottom: 1px solid #ccc"
-                            :editor="editorRef"
-                            :defaultConfig="toolbarConfig"
-                            mode="default"
-                    />
-                    <Editor
-                            style="height: 500px; overflow-y: hidden;"
-                            v-model="valueHtml"
-                            :defaultConfig="editorConfig"
-                            mode="default"
-                            @onCreated="handleCreated"
-                    />
-                </div>
-            </a-form-item>
-        </a-form>
-    </a-modal>
 </template>
 
 <script lang="ts">
@@ -181,7 +196,7 @@
             const editorRef = shallowRef();
             const valueHtml = ref();  // 内容HTML
             const toolbarConfig = {};
-            const editorConfig = {placeholder: '请输入内容...'};
+            const editorConfig = {placeholder: '请输入文档内容...'};
             onBeforeUnmount(() => {  // 组件销毁时，也及时销毁编辑器
                 const editor = editorRef.value;
                 if (editor == null) return;
@@ -191,7 +206,7 @@
                 editorRef.value = editor; // 记录 editor 实例，重要！
             };
 
-            const handleModalOk = () => {
+            const handleSave = () => {
                 modalLoading.value = true;
                 // axios.post："application/json"
                 axios.post("/doc/save", doc.value).then((response) => {
@@ -337,7 +352,7 @@
 
                 modalVisible,
                 modalLoading,
-                handleModalOk,
+                handleSave,
                 doc,
 
                 edit,
