@@ -51,7 +51,7 @@
                                 </a-space>
                             </template>
                             <template v-if="column.key === 'name'">
-                                {{record.sort}} {{record.name}}
+                                {{record.sort}}-{{record.name}}
                             </template>
                         </template>
                     </a-table>
@@ -60,7 +60,7 @@
                     <p>
                         <a-form layout="inline">
                             <a-form-item>
-                                <a-tooltip title="确保点击左侧编辑或者新增按钮后再进行文档保存！" color="purple" placement="right">
+                                <a-tooltip title="初始为新增文档或者点击左侧编辑后再进行文档保存！" color="purple" placement="right">
                                     <a-button type="primary" @click="handleSave" size="large">
                                         保存
                                     </a-button>
@@ -155,7 +155,7 @@
                 handleQuery();
             };
 
-            // 表单
+            // 下拉选择器的数据
             const treeSelectData = ref();
             treeSelectData.value = [];
 
@@ -191,7 +191,7 @@
              */
             const handleQuery = () => {
                 loading.value = true;
-                axios.get("/doc/all").then((response) => {
+                axios.get("/doc/find/" + route.query.ebookId).then((response) => {
                     loading.value = false;
                     const data = response.data;
                     if (data.success) {
@@ -199,6 +199,9 @@
                         // 先清空数据再执行查询
                         level1.value = [];
                         level1.value = Tool.array2Tree(docs, 0);
+
+                        // 初始的时候默认新增文档状态，把下拉数据也初始化了
+                        add();
                     } else {
                         message.error(data.message)
                     }
@@ -230,6 +233,7 @@
                         message.success('保存成功！');
                         // 刷新页面
                         handleQuery();
+                        add();  // 处理完后默认新增状态
                     } else {
                         message.error(data.message)
                     }

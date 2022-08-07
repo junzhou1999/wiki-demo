@@ -59,15 +59,7 @@ public class DocService {
 		return pageResp;
 	}
 
-	// 一个性取出表内容
-	public List<DocQueryResp> all() {
-		DocExample docExample = new DocExample();
-		docExample.setOrderByClause("sort asc");  // 以排序字段显示
-		List<Doc> docList = docMapper.selectByExample(docExample);
-		List<DocQueryResp> respList = CopyUtil.copyList(docList, DocQueryResp.class);
-		return respList;
-	}
-
+	// 按电子书编号取文档内容
 	public List<DocQueryResp> findByEbookId(Long ebookId) {
 		DocExample docExample = new DocExample();
 		docExample.setOrderByClause("sort asc");  // 以排序字段显示

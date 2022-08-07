@@ -32,14 +32,6 @@ public class DocController {
 		return resp;
 	}
 
-	@RequestMapping(value = "/all", method = RequestMethod.GET)
-	public CommonResp all() {
-		List<DocQueryResp> list = docService.all();
-		CommonResp<List<DocQueryResp>> resp = new CommonResp<>();
-		resp.setContent(list);
-		return resp;
-	}
-
 	/**
 	 * 指定某一门电子书获取其文档信息
 	 *

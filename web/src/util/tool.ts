@@ -23,7 +23,8 @@ export class Tool {
      */
     public static copy(obj: object) {
         if (Tool.isNotEmpty(obj)) {
-            return JSON.parse(JSON.stringify(obj));
+            const cloneDeep = require('lodash.clonedeep');
+            return cloneDeep(obj);
         }
     }
 
@@ -40,6 +41,7 @@ export class Tool {
         for (let i = 0; i < array.length; i++) {
             const c = array[i];
             // 递归条件
+            c.parent = Object(c.parent);
             if (Number(c.parent) === Number(parentId)) {
                 result.push(c);  // push了children对象和父属性
 
