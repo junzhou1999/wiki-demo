@@ -40,6 +40,20 @@ public class DocController {
 		return resp;
 	}
 
+	/**
+	 * 指定某一门电子书获取其文档信息
+	 *
+	 * @param ebookId
+	 * @return
+	 */
+	@RequestMapping(value = "/find/{ebookId}", method = RequestMethod.GET)
+	public CommonResp all(@PathVariable Long ebookId) {
+		List<DocQueryResp> list = docService.findByEbookId(ebookId);
+		CommonResp<List<DocQueryResp>> resp = new CommonResp<>();
+		resp.setContent(list);
+		return resp;
+	}
+
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public CommonResp save(@RequestBody @Valid DocSaveReq docSaveReq) {
 		docService.save(docSaveReq);

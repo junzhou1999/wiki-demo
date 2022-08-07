@@ -68,6 +68,19 @@ public class DocService {
 		return respList;
 	}
 
+	public List<DocQueryResp> findByEbookId(Long ebookId) {
+		DocExample docExample = new DocExample();
+		docExample.setOrderByClause("sort asc");  // 以排序字段显示
+
+		// 查询条件
+		DocExample.Criteria criteria = docExample.createCriteria();
+		criteria.andEbookIdEqualTo(ebookId);
+
+		List<Doc> docList = docMapper.selectByExample(docExample);
+		List<DocQueryResp> respList = CopyUtil.copyList(docList, DocQueryResp.class);
+		return respList;
+	}
+
 	/**
 	 * 更新和新增操作
 	 */
@@ -110,7 +123,7 @@ public class DocService {
 
 	public String findContent(Long id) {
 		Content content = contentMapper.selectByPrimaryKey(id);
-		if (ObjectUtils.isEmpty(content.getContent())) {
+		if (ObjectUtils.isEmpty(content)) {  // 判空是判空整个对象，不是判空对象的某个属性
 			return "";
 		}
 		return content.getContent();
