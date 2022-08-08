@@ -51,7 +51,8 @@
                                 </a-space>
                             </template>
                             <template v-if="column.key === 'name'">
-                                {{record.sort}}-{{record.name}}
+                                <span v-show="record.id === editId" style="color: #1890ff"><b>{{record.sort}}-{{record.name}}</b></span>
+                                <span v-show="record.id != editId">{{record.sort}}-{{record.name}}</span>
                             </template>
                         </template>
                     </a-table>
@@ -91,6 +92,12 @@
                             <a-input-number v-model:value="doc.sort" style="width: 100%" :min="1" placeholder="请选择排序"/>
                         </a-form-item>
                         <a-form-item>
+                            <a-button type="primary" @click="handlePreview">
+                                <EyeOutlined/>
+                                内容预览
+                            </a-button>
+                        </a-form-item>
+                        <a-form-item>
                             <div style="border: 1px solid #ccc">
                                 <Toolbar
                                         style="border-bottom: 1px solid #ccc"
@@ -111,6 +118,15 @@
                 </a-col>
             </a-row>
 
+            <a-drawer
+                    v-model:visible="drawerVisible"
+                    class="custom-class"
+                    title="文档预览"
+                    placement="right"
+                    :width="1100"
+            >
+                <div class="wangeditor5" :innerHTML="previewHtml"></div>
+            </a-drawer>
         </a-layout-content>
     </a-layout>
 </template>
@@ -240,6 +256,7 @@
                 });
             };
 
+            const editId = ref();  // 用于高亮显示的value
             // 编辑
             const edit = (record: any) => {
                 const editor = editorRef.value;  // 获取editor
@@ -247,6 +264,7 @@
                 editor.setHtml('');
                 // 把表格中docs的数据项复制给新的变量doc
                 doc.value = Tool.copy(record);  // 复制多一个值，以免对原来record的引用进行修改
+                editId.value = doc.value.id;
                 handleQueryContent();
 
                 // 自身和子文档不可以作为自身的父文档
@@ -275,6 +293,7 @@
                 //console.log("aaa " + Array.isArray(treeSelectData.value));  // false, undefined
                 treeSelectData.value.unshift({id: 0, name: '顶级文档'});
 
+                editId.value = null;
             };
 
             const setDisable = (treeSelectData: any, id: any) => {
@@ -364,6 +383,16 @@
                 });
             };
 
+            // 抽屉drawer所需的变量
+            const previewHtml = ref();
+            previewHtml.value = '';
+            const drawerVisible = ref<boolean>(false);
+            const handlePreview = () => {
+                const editor = editorRef.value;  // 获取editor
+                previewHtml.value = editor.getHtml();
+                drawerVisible.value = true;
+            };
+
             onMounted(() => {
                 handleQuery();  // 初始的时候也要查一次
             });
@@ -378,6 +407,7 @@
                 doc,
 
                 edit,
+                editId,
                 add,
                 treeSelectData,
                 showConfirm,
@@ -388,8 +418,11 @@
                 valueHtml,
                 toolbarConfig,
                 editorConfig,
-                handleCreated
+                handleCreated,
 
+                handlePreview,
+                previewHtml,
+                drawerVisible
             }
         }
     });
