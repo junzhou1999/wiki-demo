@@ -269,7 +269,10 @@
                 };
 
                 // 修正数据源和插入顶级文档选项
-                treeSelectData.value = Tool.copy(level1.value);
+                treeSelectData.value = Tool.copy(level1.value) || [];
+                // 如果取到level1的值为空，treeSelectData的值会变成undefined，转成布尔值是false，所以还是要在后边加[]
+                //treeSelectData.value = Tool.copy(level1.value);
+                //console.log("aaa " + Array.isArray(treeSelectData.value));  // false, undefined
                 treeSelectData.value.unshift({id: 0, name: '顶级文档'});
 
             };
