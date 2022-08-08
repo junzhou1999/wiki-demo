@@ -27,7 +27,7 @@
                 </a-tree>
             </a-col>
             <a-col :span="18">
-                <div :innerHTML="displayHtml">
+                <div class="wangeditor5" :innerHTML="displayHtml">
                 </div>
             </a-col>
         </a-row>
@@ -205,3 +205,63 @@
         },
     });
 </script>
+
+<style>
+    /*参考官网样式 https://www.wangeditor.com/demo/css/view.css */
+    /*没有加上scoped的话样式全局生效*/
+    .wangeditor5 {
+        /*border: 3px solid #ccc;*/
+        /*border-radius: 5px;*/
+        padding: 0 10px;
+        margin-top: 20px;
+        overflow-x: auto;
+    }
+
+    .wangeditor5 p,
+    .wangeditor5 li {
+        white-space: pre-wrap; /* 保留空格 */
+    }
+
+    .wangeditor5 blockquote {
+        border-left: 8px solid #d0e5f2;
+        padding: 10px 10px;
+        margin: 10px 0;
+        background-color: #f1f1f1;
+    }
+
+    .wangeditor5 code {
+        font-family: monospace;
+        background-color: #eee;
+        padding: 3px;
+        border-radius: 3px;
+    }
+
+    .wangeditor5 pre > code {
+        display: block;
+        padding: 10px;
+    }
+
+    .wangeditor5 table {
+        border-collapse: collapse;
+    }
+
+    .wangeditor5 td,
+    .wangeditor5 th {
+        border: 1px solid #ccc;
+        min-width: 50px;
+        height: 20px;
+    }
+
+    .wangeditor5 th {
+        background-color: #f1f1f1;
+    }
+
+    .wangeditor5 ul,
+    .wangeditor5 ol {
+        padding-left: 20px;
+    }
+
+    .wangeditor5 input[type="checkbox"] {
+        margin-right: 5px;
+    }
+</style>
