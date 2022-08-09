@@ -193,3 +193,15 @@ create table T_CONTENT
     "content" text   not null, -- 文档内容文本（HTML）
     constraint PK_CONTENT primary key ("id")
 );
+
+-- 用户表
+drop table if exists T_USER;
+create table T_USER
+(
+    "id"         bigint      not null, -- ID
+    "login_name" varchar(50) not null, --登陆名
+    "name"       varchar(50),          -- 昵称
+    "password"   char(32)    not null, -- 密码
+    constraint PK_USER primary key ("id"),
+    constraint UK_LOGIN_NAME unique ("login_name")
+);
