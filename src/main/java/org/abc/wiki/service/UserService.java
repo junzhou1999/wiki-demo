@@ -69,14 +69,15 @@ public class UserService {
 			if (ObjectUtils.isEmpty(userDB)) {
 				// 新增
 				user.setId(snowFlake.nextId());
-				userMapper.insertSelective(user);
+				userMapper.insert(user);
 			} else {
 				// 用户名已存在，抛出自定义异常
 				throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
 			}
 		} else {
-			// 更新，有id主键的就是更新"where id=?"
-			userMapper.updateByPrimaryKey(user);
+			// 后端更新
+			user.setLoginName(null);  // 无论什么原因，登录名都不能修改
+			userMapper.updateByPrimaryKeySelective(user);
 		}
 	}
 
