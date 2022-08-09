@@ -8,6 +8,7 @@ import org.abc.wiki.domain.User;
 import org.abc.wiki.domain.UserExample;
 import org.abc.wiki.mapper.UserMapper;
 import org.abc.wiki.req.UserQueryReq;
+import org.abc.wiki.req.UserResetPwdReq;
 import org.abc.wiki.req.UserSaveReq;
 import org.abc.wiki.resp.UserQueryResp;
 import org.abc.wiki.resp.PageResp;
@@ -89,6 +90,12 @@ public class UserService {
 		userMapper.deleteByPrimaryKey(id);
 	}
 
+	/**
+	 * 查询用户名避免用户名重复
+	 *
+	 * @param loginName
+	 * @return
+	 */
 	public User findByLoginName(String loginName) {
 		UserExample userExample = new UserExample();
 		// where条件类
@@ -99,5 +106,15 @@ public class UserService {
 		if (ObjectUtils.isEmpty(list))
 			return null;
 		return list.get(0);
+	}
+
+	/**
+	 * 重置密码
+	 *
+	 * @param req
+	 */
+	public void resetPwd(UserResetPwdReq req) {
+		User user = CopyUtil.copy(req, User.class);
+		userMapper.updateByPrimaryKeySelective(user);
 	}
 }

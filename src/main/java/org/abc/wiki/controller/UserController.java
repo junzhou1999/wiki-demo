@@ -1,6 +1,7 @@
 package org.abc.wiki.controller;
 
 import org.abc.wiki.req.UserQueryReq;
+import org.abc.wiki.req.UserResetPwdReq;
 import org.abc.wiki.req.UserSaveReq;
 import org.abc.wiki.resp.CommonResp;
 import org.abc.wiki.resp.UserQueryResp;
@@ -42,6 +43,15 @@ public class UserController {
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
 	public CommonResp delete(@PathVariable Long id) {
 		userService.delete(id);
+		CommonResp resp = new CommonResp();
+		return resp;
+	}
+
+	@RequestMapping(value = "/reset-password", method = RequestMethod.POST)
+	public CommonResp resetPwd(@RequestBody @Valid UserResetPwdReq req) {
+		// 对传进来的数据加密
+		req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+		userService.resetPwd(req);
 		CommonResp resp = new CommonResp();
 		return resp;
 	}

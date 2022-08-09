@@ -33,6 +33,9 @@
                     <template v-if="column.key === 'action'">
                         <!-- 按钮渲染 -->
                         <a-space size="small">
+                            <a-button type="primary" @click="reset(record)">
+                                重置密码
+                            </a-button>
                             <a-button type="primary" @click="edit(record)">
                                 编辑
                             </a-button>
@@ -71,6 +74,20 @@
             </a-form-item>
             <a-form-item label="密码" v-show="!user.id">
                 <a-input v-model:value="user.password"/>
+            </a-form-item>
+        </a-form>
+    </a-modal>
+
+    <!-- 对话框，内含表单 -->
+    <a-modal
+            v-model:visible="resetModalVisible"
+            title="密码表单"
+            :confirm-loading="resetModalLoading"
+            @ok="handleResetModalOk"
+    >
+        <a-form :model="user" :label-col="{ span:4 }" :wrapper-col="{ span:22 }">
+            <a-form-item label="新密码">
+                <a-input v-model:value="user.password" placeholder="请输入新密码"/>
             </a-form-item>
         </a-form>
     </a-modal>
@@ -116,9 +133,11 @@
                 }
             ];
 
-            /**
-             * 向后端指定分页参数查询获取，并获取后端确切的数据和分页参数
-             **/
+
+            // 查询的参数
+            const queryParam = ref();
+            queryParam.value = {};
+            //向后端指定分页参数查询获取，并获取后端确切的数据和分页参数
             const handleQuery = (params: any) => {
                 loading.value = true;
                 axios.get("/user/list", {
@@ -132,7 +151,6 @@
                     const data = response.data;
                     if (data.success) {
                         users.value = data.content.list;
-
                         // 重置分页按钮
                         pagination.value.current = params.page;
                         pagination.value.total = data.content.total;
@@ -156,18 +174,17 @@
             // 表单
             const modalVisible = ref<boolean>(false);
             const modalLoading = ref<boolean>(false);
+            const user = ref();
             const handleModalOk = () => {
                 modalLoading.value = true;
                 // 密码加密传输
                 user.value.password = hexMd5(user.value.password + KEY);
-
                 // 把选择框的内容给到user
                 axios.post("/user/save", user.value).then((response) => {
                     const data = response.data;
                     modalLoading.value = false;   // 无论成功与否loading效果都要终止
                     if (data.success) {
                         modalVisible.value = false;
-
                         // 刷新页面
                         handleQuery({
                             page: pagination.value.current,
@@ -179,8 +196,6 @@
                 });
             };
 
-            // 表单的user存储的值
-            const user = ref();
             // 编辑
             const edit = (record: any) => {
                 // 把表格中users的数据项复制给新的变量user
@@ -208,9 +223,35 @@
                 });
             };
 
-            // 查询的参数
-            const queryParam = ref();
-            queryParam.value = {};
+            const reset = (record: any) => {
+                // 把表格中users的数据项复制给新的变量user
+                user.value = Tool.copy(record);  // 复制多一个值，以免对原来record的引用进行修改
+                user.value.password = null;
+                resetModalVisible.value = true;  // 弹出对话框
+            };
+            // 重置密码表单
+            const resetModalVisible = ref<boolean>(false);
+            const resetModalLoading = ref<boolean>(false);
+            const handleResetModalOk = () => {
+                resetModalLoading.value = true;
+                // 密码加密传输
+                user.value.password = hexMd5(user.value.password + KEY);
+                // 把选择框的内容给到user
+                axios.post("/user/reset-password", user.value).then((response) => {
+                    const data = response.data;
+                    resetModalLoading.value = false;   // 无论成功与否loading效果都要终止
+                    if (data.success) {
+                        resetModalVisible.value = false;
+                        // 刷新页面
+                        handleQuery({
+                            page: pagination.value.current,
+                            size: pagination.value.pageSize
+                        });
+                    } else {
+                        message.error(data.message)
+                    }
+                });
+            };
 
             onMounted(() => {
                 handleQuery({page: 1, size: pagination.value.pageSize});
@@ -234,6 +275,11 @@
 
                 queryParam,
                 handleQuery,
+
+                reset,
+                resetModalVisible,
+                resetModalLoading,
+                handleResetModalOk
             }
         }
     });
