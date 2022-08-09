@@ -82,6 +82,10 @@
     import {message} from "ant-design-vue";
     import {Tool} from "@/util/tool";
 
+    // js定义变量是存在的
+    declare let hexMd5: any;
+    declare let KEY: any;
+
     export default defineComponent({
         name: 'AdminUser',
         setup() {
@@ -154,6 +158,9 @@
             const modalLoading = ref<boolean>(false);
             const handleModalOk = () => {
                 modalLoading.value = true;
+                // 密码加密传输
+                user.value.password = hexMd5(user.value.password + KEY);
+
                 // 把选择框的内容给到user
                 axios.post("/user/save", user.value).then((response) => {
                     const data = response.data;

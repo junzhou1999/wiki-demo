@@ -6,6 +6,7 @@ import org.abc.wiki.resp.CommonResp;
 import org.abc.wiki.resp.UserQueryResp;
 import org.abc.wiki.resp.PageResp;
 import org.abc.wiki.service.UserService;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -30,8 +31,10 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public CommonResp save(@RequestBody @Valid UserSaveReq userSaveReq) {
-		userService.save(userSaveReq);
+	public CommonResp save(@RequestBody @Valid UserSaveReq req) {
+		// 对传进来的数据加密
+		req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+		userService.save(req);
 		CommonResp resp = new CommonResp();
 		return resp;
 	}
