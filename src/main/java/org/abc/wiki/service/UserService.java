@@ -77,6 +77,7 @@ public class UserService {
 		} else {
 			// 后端更新
 			user.setLoginName(null);  // 无论什么原因，登录名都不能修改
+			user.setPassword(null);
 			userMapper.updateByPrimaryKeySelective(user);
 		}
 	}
