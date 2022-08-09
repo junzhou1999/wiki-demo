@@ -2,6 +2,8 @@ package org.abc.wiki.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.abc.wiki.Exception.BusinessException;
+import org.abc.wiki.Exception.BusinessExceptionCode;
 import org.abc.wiki.domain.User;
 import org.abc.wiki.domain.UserExample;
 import org.abc.wiki.mapper.UserMapper;
@@ -63,9 +65,15 @@ public class UserService {
 	public void save(UserSaveReq req) {
 		User user = CopyUtil.copy(req, User.class);
 		if (ObjectUtils.isEmpty(req.getId())) {
-			// 新增
-			user.setId(snowFlake.nextId());
-			userMapper.insertSelective(user);
+			User userDB = findByLoginName(req.getLoginName());
+			if (ObjectUtils.isEmpty(userDB)) {
+				// 新增
+				user.setId(snowFlake.nextId());
+				userMapper.insertSelective(user);
+			} else {
+				// 用户名已存在，抛出自定义异常
+				throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
+			}
 		} else {
 			// 更新，有id主键的就是更新"where id=?"
 			userMapper.updateByPrimaryKey(user);
@@ -77,5 +85,17 @@ public class UserService {
 	 */
 	public void delete(Long id) {
 		userMapper.deleteByPrimaryKey(id);
+	}
+
+	public User findByLoginName(String loginName) {
+		UserExample userExample = new UserExample();
+		// where条件类
+		UserExample.Criteria criteria = userExample.createCriteria();
+		criteria.andLoginNameEqualTo(loginName);
+		List<User> list = userMapper.selectByExample(userExample);
+
+		if (ObjectUtils.isEmpty(list))
+			return null;
+		return list.get(0);
 	}
 }
