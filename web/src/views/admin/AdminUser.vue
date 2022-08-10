@@ -176,24 +176,28 @@
             const modalLoading = ref<boolean>(false);
             const user = ref();
             const handleModalOk = () => {
-                modalLoading.value = true;
-                // 密码加密传输
-                user.value.password = hexMd5(user.value.password + KEY);
-                // 把选择框的内容给到user
-                axios.post("/user/save", user.value).then((response) => {
-                    const data = response.data;
-                    modalLoading.value = false;   // 无论成功与否loading效果都要终止
-                    if (data.success) {
-                        modalVisible.value = false;
-                        // 刷新页面
-                        handleQuery({
-                            page: pagination.value.current,
-                            size: pagination.value.pageSize
-                        });
-                    } else {
-                        message.error(data.message)
-                    }
-                });
+                if (Tool.isNotEmpty(user.value.password)) {
+                    modalLoading.value = true;
+                    // 密码加密传输
+                    user.value.password = hexMd5(user.value.password + KEY);
+                    // 把选择框的内容给到user
+                    axios.post("/user/save", user.value).then((response) => {
+                        const data = response.data;
+                        modalLoading.value = false;   // 无论成功与否loading效果都要终止
+                        if (data.success) {
+                            modalVisible.value = false;
+                            // 刷新页面
+                            handleQuery({
+                                page: pagination.value.current,
+                                size: pagination.value.pageSize
+                            });
+                        } else {
+                            message.error(data.message)
+                        }
+                    });
+                } else {
+                    message.error('【密码】不能为空');
+                }
             };
 
             // 编辑
@@ -233,24 +237,28 @@
             const resetModalVisible = ref<boolean>(false);
             const resetModalLoading = ref<boolean>(false);
             const handleResetModalOk = () => {
-                resetModalLoading.value = true;
-                // 密码加密传输
-                user.value.password = hexMd5(user.value.password + KEY);
-                // 把选择框的内容给到user
-                axios.post("/user/reset-password", user.value).then((response) => {
-                    const data = response.data;
-                    resetModalLoading.value = false;   // 无论成功与否loading效果都要终止
-                    if (data.success) {
-                        resetModalVisible.value = false;
-                        // 刷新页面
-                        handleQuery({
-                            page: pagination.value.current,
-                            size: pagination.value.pageSize
-                        });
-                    } else {
-                        message.error(data.message)
-                    }
-                });
+                if (Tool.isNotEmpty(user.value.password)) {
+                    resetModalLoading.value = true;
+                    // 密码加密传输
+                    user.value.password = hexMd5(user.value.password + KEY);
+                    // 把选择框的内容给到user
+                    axios.post("/user/reset-password", user.value).then((response) => {
+                        const data = response.data;
+                        resetModalLoading.value = false;   // 无论成功与否loading效果都要终止
+                        if (data.success) {
+                            resetModalVisible.value = false;
+                            // 刷新页面
+                            handleQuery({
+                                page: pagination.value.current,
+                                size: pagination.value.pageSize
+                            });
+                        } else {
+                            message.error(data.message)
+                        }
+                    });
+                } else {
+                    message.error('【密码】不能为空');
+                }
             };
 
             onMounted(() => {

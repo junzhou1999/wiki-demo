@@ -33,14 +33,15 @@
             @ok="handleLogin"
     >
         <a-form :model="loginUser" :label-col="{ span:4 }" :wrapper-col="{ span:22 }">
-            <a-form-item label="用户名">
+            <a-form-item label="用户名" name="loginName" :rules="[{ required: true, message: '请输入用户名！' }]">
                 <!-- 前端编辑不允许修改登录 -->
                 <a-input v-model:value="loginUser.loginName"/>
             </a-form-item>
-            <a-form-item label="密码">
-                <a-input v-model:value="loginUser.password"/>
+            <a-form-item label="密码" name="password" :rules="[{ required: true, message: '请输入密码！' }]">
+                <a-input-password v-model:value="loginUser.password"/>
             </a-form-item>
         </a-form>
+
     </a-modal>
 </template>
 
@@ -48,6 +49,7 @@
     import {defineComponent, ref} from 'vue';
     import axios from "axios";
     import {message} from "ant-design-vue";
+    import {Tool} from "@/util/tool";
 
     // js定义变量是存在的
     declare let hexMd5: any;
@@ -67,18 +69,26 @@
             // 登录
             const handleLogin = () => {
                 console.log("开始登录");
-                loginModalLoading.value = true;
-                loginUser.value.password = hexMd5(loginUser.value.password + KEY);
-                axios.post('/user/login', loginUser.value).then((response) => {
-                    loginModalLoading.value = false;
-                    const data = response.data;
-                    if (data.success) {
-                        loginModalVisible.value = false;
-                        message.success("登录成功！");
-                    } else {
-                        message.error(data.message);
-                    }
-                });
+                if (Tool.isNotEmpty(loginUser.value.loginName) && Tool.isNotEmpty(loginUser.value.password)) {
+                    loginModalLoading.value = true;
+                    loginUser.value.password = hexMd5(loginUser.value.password + KEY);
+                    axios.post('/user/login', loginUser.value).then((response) => {
+                        const data = response.data;
+                        loginModalLoading.value = false;
+                        if (data.success) {
+                            loginModalVisible.value = false;
+                            message.success("登录成功！");
+                        } else {
+                            message.error(data.message);
+                        }
+                    });
+                }
+                if (Tool.isEmpty(loginUser.value.loginName)) {
+                    message.error('【用户名】不能为空');
+                }
+                if (Tool.isEmpty(loginUser.value.password)) {
+                    message.error('【密码】不能为空');
+                }
             };
 
             const showloginModal = () => {
