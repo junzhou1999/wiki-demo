@@ -1,9 +1,11 @@
 package org.abc.wiki.controller;
 
+import org.abc.wiki.req.UserLoginReq;
 import org.abc.wiki.req.UserQueryReq;
 import org.abc.wiki.req.UserResetPwdReq;
 import org.abc.wiki.req.UserSaveReq;
 import org.abc.wiki.resp.CommonResp;
+import org.abc.wiki.resp.UserLoginResp;
 import org.abc.wiki.resp.UserQueryResp;
 import org.abc.wiki.resp.PageResp;
 import org.abc.wiki.service.UserService;
@@ -31,6 +33,7 @@ public class UserController {
 		return resp;
 	}
 
+	// 新增或编辑用户信息
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	public CommonResp save(@RequestBody @Valid UserSaveReq req) {
 		// 对传进来的数据加密
@@ -40,6 +43,7 @@ public class UserController {
 		return resp;
 	}
 
+	// 删除用户
 	@RequestMapping(value = "/delete/{id}", method = RequestMethod.DELETE)
 	public CommonResp delete(@PathVariable Long id) {
 		userService.delete(id);
@@ -47,12 +51,24 @@ public class UserController {
 		return resp;
 	}
 
+	// 密码重置
 	@RequestMapping(value = "/reset-password", method = RequestMethod.POST)
 	public CommonResp resetPwd(@RequestBody @Valid UserResetPwdReq req) {
 		// 对传进来的数据加密
 		req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
 		userService.resetPwd(req);
 		CommonResp resp = new CommonResp();
+		return resp;
+	}
+
+	// 用户登录
+	@RequestMapping(value = "/login", method = RequestMethod.POST)
+	public CommonResp login(@RequestBody @Valid UserLoginReq req) {
+		// 对传进来的数据加密
+		req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+		UserLoginResp userLoginResp = userService.login(req);
+		CommonResp<UserLoginResp> resp = new CommonResp<>();
+		resp.setContent(userLoginResp);
 		return resp;
 	}
 }

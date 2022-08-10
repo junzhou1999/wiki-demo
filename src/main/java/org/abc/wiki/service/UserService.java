@@ -7,11 +7,13 @@ import org.abc.wiki.Exception.BusinessExceptionCode;
 import org.abc.wiki.domain.User;
 import org.abc.wiki.domain.UserExample;
 import org.abc.wiki.mapper.UserMapper;
+import org.abc.wiki.req.UserLoginReq;
 import org.abc.wiki.req.UserQueryReq;
 import org.abc.wiki.req.UserResetPwdReq;
 import org.abc.wiki.req.UserSaveReq;
-import org.abc.wiki.resp.UserQueryResp;
 import org.abc.wiki.resp.PageResp;
+import org.abc.wiki.resp.UserLoginResp;
+import org.abc.wiki.resp.UserQueryResp;
 import org.abc.wiki.util.CopyUtil;
 import org.abc.wiki.util.SnowFlake;
 import org.slf4j.Logger;
@@ -116,5 +118,24 @@ public class UserService {
 	public void resetPwd(UserResetPwdReq req) {
 		User user = CopyUtil.copy(req, User.class);
 		userMapper.updateByPrimaryKeySelective(user);
+	}
+
+	public UserLoginResp login(UserLoginReq req) {
+		User userDB = findByLoginName(req.getLoginName());
+		if (ObjectUtils.isEmpty(userDB)) {
+			// 用户名不存在
+			LOG.info("用户名不存在：{}", req.getLoginName());  // 打印的日志信息尽可能详细
+			throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+		} else {
+			if (!userDB.getPassword().equals(req.getPassword())) {
+				// 密码不正确
+				LOG.info("密码不正确，输入密码：{}，数据库密码：{}", req.getPassword(), userDB.getPassword());
+				throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+			} else {
+				// 登录成功
+				UserLoginResp resp = CopyUtil.copy(userDB, UserLoginResp.class);
+				return resp;
+			}
+		}
 	}
 }
