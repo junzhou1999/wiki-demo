@@ -53,6 +53,7 @@
     import axios from "axios";
     import {message} from "ant-design-vue";
     import {Tool} from "@/util/tool";
+    import store from "@/store";
 
     // js定义变量是存在的
     declare let hexMd5: any;
@@ -86,6 +87,7 @@
                         if (data.success) {
                             loginModalVisible.value = false;
                             user.value = data.content;  // 得到返回信息
+                            store.commit("setUser", user.value);  // 触发函数
                             message.success("登录成功！");
                         } else {
                             message.error(data.message);
