@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts">
-    import {defineComponent, ref} from 'vue';
+    import {computed, defineComponent, ref} from 'vue';
     import axios from "axios";
     import {message} from "ant-design-vue";
     import {Tool} from "@/util/tool";
@@ -71,9 +71,11 @@
                 password: ''
             });
 
-            // 登录后的用户信息
-            const user = ref();
-            user.value = {};
+            // 登录后的用户信息，属于动态被监听状态
+            const user = computed(
+                () => {
+                    return store.state.user;
+                });
 
             // 登录
             const handleLogin = () => {
@@ -86,8 +88,7 @@
                         loginModalLoading.value = false;
                         if (data.success) {
                             loginModalVisible.value = false;
-                            user.value = data.content;  // 得到返回信息
-                            store.commit("setUser", user.value);  // 触发函数
+                            store.commit("setUser", data.content);  // 触发函数
                             message.success("登录成功！");
                         } else {
                             message.error(data.message);
