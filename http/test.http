@@ -28,3 +28,13 @@ GET http://localhost:5921/test/list
 Accept: application/json
 
 ###
+
+POST http://localhost:5921/test/redis/set/mykey/myvalue
+Content-Type: application/json
+
+###
+
+GET http://localhost:5921/test/redis/get/mykey
+Accept: application/json
+
+###

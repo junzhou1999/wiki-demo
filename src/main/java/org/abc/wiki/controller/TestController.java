@@ -2,11 +2,15 @@ package org.abc.wiki.controller;
 
 import org.abc.wiki.domain.Test;
 import org.abc.wiki.service.TestService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @RestController // (Controller返回的是页面)加ResponseBody
 public class TestController {
@@ -16,6 +20,12 @@ public class TestController {
 
 	@Resource
 	private TestService testService;
+
+	@Resource
+	private RedisTemplate redisTemplate;
+
+	private static final Logger LOG =
+			LoggerFactory.getLogger(TestController.class);
 
 	@RequestMapping(value = "/hello", method = RequestMethod.GET)
 	public String sayHello() {
@@ -37,4 +47,19 @@ public class TestController {
 	public List<Test> list() {
 		return testService.list();
 	}
+
+	@PostMapping("/test/redis/set/{key}/{value}")
+	public String set(@PathVariable String key, @PathVariable String value) {
+		redisTemplate.opsForValue().set(key, value, 24 * 3600, TimeUnit.SECONDS);
+		LOG.info("key: {}, value: {}", key, value);
+		return "success";
+	}
+
+	@GetMapping("/test/redis/get/{key}")
+	public Object get(@PathVariable String key) {
+		Object obj = redisTemplate.opsForValue().get(key);
+		LOG.info("key: {}, value: {}", key, obj);
+		return obj;
+	}
+
 }

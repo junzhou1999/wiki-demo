@@ -12,6 +12,12 @@ spring:
     username: scott
     password: tiger
     driver-class-name: org.postgresql.Driver
+  # redis，选择第二个数据库
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: redispwd
+    database: 1
 
 # 配置mybatis所有Mapper.xml所在的路径
 mybatis:
