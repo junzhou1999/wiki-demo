@@ -21,12 +21,23 @@
             <a-menu-item key="/about">
                 <router-link to="/about">关于我们</router-link>
             </a-menu-item>
-            <a class="login-menu" v-show="user.id">
-                <span v-show="user.id">您好：{{user.name}}</span>
+            <a class="login-menu" :style="{right: '150px'}" v-show="user.id">
+                您好：{{user.name}}
             </a>
-            <a class="login-menu" @click="showloginModal" v-show="!user.id">
-                <span v-show="!user.id">登录</span>
+            <a class="login-menu" :style="{right: '60px'}" @click="showloginModal" v-show="!user.id">
+                登录
             </a>
+            <a-popconfirm
+                    title="是否退出登录？"
+                    ok-text="确认"
+                    cancel-text="取消"
+                    @confirm="handleLogout"
+            >
+                <a class="login-menu" :style="{right: '60px'}" v-show="user.id">
+                    退出登录
+                </a>
+            </a-popconfirm>
+
         </a-menu>
     </a-layout-header>
     <a-modal
@@ -35,7 +46,7 @@
             :confirm-loading="loginModalLoading"
             @ok="handleLogin"
     >
-        <a-form :model="loginUser" :label-col="{ span:4 }" :wrapper-col="{ span:22 }">
+        <a-form :model="loginUser" :label-col="{ span:4 }" :wrapper-col="{ span:22 } ">
             <a-form-item label="用户名" name="loginName" :rules="[{ required: true, message: '请输入用户名！' }]">
                 <!-- 前端编辑不允许修改登录 -->
                 <a-input v-model:value="loginUser.loginName"/>
@@ -71,7 +82,7 @@
                 password: ''
             });
 
-            // 登录后的用户信息，属于动态被监听状态
+            // 登录后的用户信息，属于动态被监听状态，还是属于响应式变量
             const user = computed(
                 () => {
                     return store.state.user;
@@ -107,6 +118,19 @@
                 loginModalVisible.value = true;
             };
 
+            // 退出登录
+            const handleLogout = () => {
+                console.log("开始退出登录");
+                axios.get('/user/logout/' + user.value.token).then((response) => {
+                    const data = response.data;
+                    if (data.success) {
+                        store.commit("setUser", {});  // 触发函数
+                        message.success("退出成功！");
+                    } else {
+                        message.error(data.message);
+                    }
+                });
+            };
             return {
                 loginModalVisible,
                 loginModalLoading,
@@ -114,7 +138,9 @@
                 showloginModal,
                 handleLogin,
 
-                user
+                user,
+
+                handleLogout
             }
         },
     });
@@ -124,8 +150,7 @@
     .login-menu {
         /*float: right; // 菜单使用了flex布局，float失效：参考：http://www.imooc.com/wiki/css3lesson/flex.html*/
         position: absolute;
-        right: 60px; /* 右边边距 */
         color: white;
-        padding-left: 10px; /* 当前菜单距离前一个菜单的间隙 */
+        padding-left: 30px; /* 当前菜单距离前一个菜单的间隙 */
     }
 </style>

@@ -35,7 +35,7 @@ public class UserController {
 	private SnowFlake snowFlake;
 
 	@Resource
-	private RedisTemplate redisTemplate;
+	private RedisTemplate redisTemplate;  // 对redis的相关操作放到了controller，因为逻辑不多
 
 	/**
 	 * @param req 只要类里边的名字跟前端传进来的参数匹配，Spring会自动映射
@@ -87,9 +87,18 @@ public class UserController {
 		userLoginResp.setToken(token.toString());
 		CommonResp<UserLoginResp> resp = new CommonResp<>();
 		LOG.info("生成单点登录token：{}，并放入redis中", token);
-		redisTemplate.opsForValue().set(token, JSONObject.toJSONString(userLoginResp), 3600 * 24, TimeUnit.SECONDS);
+		// 可以用工具将类转化成Json对象，也可以使对象类序列化
+		redisTemplate.opsForValue().set(token.toString(), JSONObject.toJSONString(userLoginResp), 3600 * 24, TimeUnit.SECONDS);
 
 		resp.setContent(userLoginResp);
+		return resp;
+	}
+
+	@RequestMapping(value = "/logout/{token}", method = RequestMethod.GET)
+	public CommonResp logout(@PathVariable String token) {
+		redisTemplate.delete(token);
+		LOG.info("从redis中删除token：{}", token);
+		CommonResp resp = new CommonResp();
 		return resp;
 	}
 }
