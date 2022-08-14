@@ -93,8 +93,9 @@
                 console.log("开始登录");
                 if (Tool.isNotEmpty(loginUser.value.loginName) && Tool.isNotEmpty(loginUser.value.password)) {
                     loginModalLoading.value = true;
-                    loginUser.value.password = hexMd5(loginUser.value.password + KEY);
-                    axios.post('/user/login', loginUser.value).then((response) => {
+                    const loginUserReq = Tool.copy(loginUser.value);  // 多复制一个变量，以免登陆错误时会显示转换后的密码
+                    loginUserReq.password = hexMd5(loginUserReq.password + KEY);
+                    axios.post('/user/login', loginUserReq).then((response) => {
                         const data = response.data;
                         loginModalLoading.value = false;
                         if (data.success) {
@@ -103,6 +104,7 @@
                             message.success("登录成功！");
                         } else {
                             message.error(data.message);
+                            loginUser.value.password = '';
                         }
                     });
                 }
@@ -130,6 +132,7 @@
                         message.error(data.message);
                     }
                 });
+                loginUser.value.password = '';
             };
             return {
                 loginModalVisible,
