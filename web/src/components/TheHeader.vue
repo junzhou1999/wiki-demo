@@ -9,17 +9,17 @@
             <a-menu-item key="/">
                 <router-link to="/">首页</router-link>
             </a-menu-item>
-            <a-menu-item key="/admin/user">
+            <a-menu-item key="/about" :style="{order: 5}">
+                <router-link to="/about">关于我们</router-link>
+            </a-menu-item>
+            <a-menu-item key="/admin/user" :style="user.id?{}:{display: 'none'}">
                 <router-link to="/admin/user">用户管理</router-link>
             </a-menu-item>
-            <a-menu-item key="/admin/ebook">
+            <a-menu-item key="/admin/ebook" :style="user.id?{}:{display: 'none'}">
                 <router-link to="/admin/ebook">电子书管理</router-link>
             </a-menu-item>
-            <a-menu-item key="/admin/category">
+            <a-menu-item key="/admin/category" :style="user.id?{}:{display: 'none'}">
                 <router-link to="/admin/category">分类管理</router-link>
-            </a-menu-item>
-            <a-menu-item key="/about">
-                <router-link to="/about">关于我们</router-link>
             </a-menu-item>
             <a class="login-menu" :style="{right: '150px'}" v-show="user.id">
                 您好：{{user.name}}
