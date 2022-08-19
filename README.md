@@ -472,3 +472,11 @@
 ### 10-21
 * 增加自定义登录表单验证
 * 需要了解js的正则表达式
+
+### 101-1
+* 后端增加静态资源的访问
+* 暂时不拦截上传接口，做测试用
+* 参考：https://cloud.tencent.com/developer/article/1892774
+* addResourceHandler：添加URL响应地址目录。
+* addResourceLocations：添加实际资源目录。（这里把资源目录都放到家目录）
+* 后续应该会把nginx代理静态资源页面
