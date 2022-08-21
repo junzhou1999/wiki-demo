@@ -4,10 +4,12 @@ import org.abc.wiki.req.DocQueryReq;
 import org.abc.wiki.req.DocSaveReq;
 import org.abc.wiki.resp.CommonResp;
 import org.abc.wiki.resp.DocQueryResp;
+import org.abc.wiki.resp.ImgUploadResp;
 import org.abc.wiki.resp.PageResp;
 import org.abc.wiki.service.DocService;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -63,6 +65,14 @@ public class DocController {
 		}
 		List<String> list = Arrays.asList(strIds.split(","));
 		docService.delete(list);
+		return resp;
+	}
+
+	@RequestMapping(value = "/upload-img", method = RequestMethod.POST)
+	public CommonResp uploadImg(@RequestPart(value = "editorImg") MultipartFile file) {
+		ImgUploadResp upload = docService.uploadImg(file);
+		CommonResp<ImgUploadResp> resp = new CommonResp<>();
+		resp.setContent(upload);
 		return resp;
 	}
 }

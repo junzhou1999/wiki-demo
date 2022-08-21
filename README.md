@@ -480,3 +480,6 @@
 * addResourceHandler：添加URL响应地址目录。
 * addResourceLocations：添加实际资源目录。（这里把资源目录都放到家目录）
 * 后续应该会把nginx代理静态资源页面
+
+### 101-2
+* 后端增加图片上传接口

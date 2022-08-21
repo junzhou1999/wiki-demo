@@ -18,6 +18,11 @@ spring:
     port: 6379
     password: redispwd
     database: 1
+  servlet:
+    # 上传文件的大小
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 # 配置mybatis所有Mapper.xml所在的路径
 mybatis:
