@@ -483,3 +483,7 @@
 
 ### 101-2
 * 后端增加图片上传接口
+
+### 101-3
+* 电子书管理页面匹配后端上传接口
+* 参考：https://www.wangeditor.com/v5/menu-config.html#上传图片

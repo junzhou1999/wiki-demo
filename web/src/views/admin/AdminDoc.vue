@@ -140,6 +140,7 @@
     import WarningOutlined from "@ant-design/icons-vue/WarningOutlined";
     import '@wangeditor/editor/dist/css/style.css'; // 引入 css
     import {Editor, Toolbar} from '@wangeditor/editor-for-vue';
+    import store from "@/store";
 
     export default defineComponent({
         name: 'AdminDoc',
@@ -179,7 +180,31 @@
             const editorRef = shallowRef();
             const valueHtml = ref();  // 内容HTML
             const toolbarConfig = {};
-            const editorConfig = {placeholder: '请输入文档内容...'};
+            type InsertFnType = (url: string, alt: string, href: string) => void;
+            const editorConfig = {
+                placeholder: '请输入文档内容...',
+                MENU_CONF: {
+                    uploadImage: {
+                        server: 'http://127.0.0.1:5921/doc/upload-img',
+                        fieldName: 'editorImg',
+                        headers: {
+                            token: store.state.user.token
+                        },
+                        maxFileSize: 10 * 1024 * 1024, // 10M
+                        customInsert(res: any, insertFn: InsertFnType) {
+                            if (res.success === false) {
+                                message.error("图片上传失败");
+                                return
+                            }
+                            const url = res.content.url;
+                            const href = res.content.href;
+                            const alt = res.content.alt;
+                            insertFn(url, alt, href)
+                        },
+                        base64LimitSize: 5 * 1024 // 5kb
+                    }
+                },
+            };
             onBeforeUnmount(() => {  // 组件销毁时，也及时销毁编辑器
                 const editor = editorRef.value;  // 获取editor
                 if (editor == null) return;
