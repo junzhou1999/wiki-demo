@@ -205,3 +205,13 @@ create table T_USER
     constraint PK_USER primary key ("id"),
     constraint UK_LOGIN_NAME unique ("login_name")
 );
+
+-- Postgre更新表信息
+update public.T_EBOOK
+set doc_count = t1.doc_count,
+    view_count=t1.view_count,
+    vote_count=t1.vote_count
+from (select ebook_id, count(1) doc_count, sum(view_count) view_count, sum(vote_count) vote_count
+      from public.T_DOC
+      group by ebook_id) t1
+where T_EBOOK.id = t1.ebook_id;

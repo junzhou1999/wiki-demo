@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.abc.wiki.mapper.EbookMapperCust">
+    <update id="updateEbookInfo">
+        update public.T_EBOOK set doc_count = t1.doc_count,
+            view_count=t1.view_count,vote_count=t1.vote_count from
+                (
+                    select ebook_id, count(1) doc_count, sum(view_count) view_count,
+                        sum(vote_count) vote_count from public.T_DOC group by ebook_id
+                ) t1
+        where T_EBOOK.id = t1.ebook_id
+    </update>
+</mapper>

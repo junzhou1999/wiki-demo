@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import org.abc.wiki.domain.Ebook;
 import org.abc.wiki.domain.EbookExample;
 import org.abc.wiki.mapper.EbookMapper;
+import org.abc.wiki.mapper.EbookMapperCust;
 import org.abc.wiki.req.EbookQueryReq;
 import org.abc.wiki.req.EbookSaveReq;
 import org.abc.wiki.resp.EbookQueryResp;
@@ -27,6 +28,9 @@ public class EbookService {
 
 	@Resource
 	private EbookMapper ebookMapper;
+
+	@Resource
+	private EbookMapperCust ebookMapperCust;
 
 	@Resource
 	private SnowFlake snowFlake;
@@ -102,5 +106,9 @@ public class EbookService {
 	 */
 	public void delete(Long id) {
 		ebookMapper.deleteByPrimaryKey(id);
+	}
+
+	public void updateEbookInfo() {
+		ebookMapperCust.updateEbookInfo();
 	}
 }
