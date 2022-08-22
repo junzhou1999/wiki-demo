@@ -22,13 +22,11 @@
 
                     <template v-for="child in item.children" :key="child.id">
                         <a-menu-item v-if="child.children == null" :key="child.id">
+                            <template #icon>
+                                <RightSquareOutlined/>
+                            </template>
                             <span>{{child.name}}</span>
                         </a-menu-item>
-                        <a-sub-menu v-else :key="child.id" :title="child.name">
-                            <a-menu-item v-for="child1 in child.children" :key="child1.id">
-                                <span>{{child1.name}}</span>
-                            </a-menu-item>
-                        </a-sub-menu>
                     </template>
                 </a-sub-menu>
             </a-menu>
@@ -44,12 +42,6 @@
                     :data-source="ebooks" :grid="{ gutter: 20, column: 3 }">
                 <template #renderItem="{ item }">   <!-- ebooks给到item变量，循环遍历 -->
                     <a-list-item key="item.name">   <!-- 后端组件 -->
-                        <template #actions>
-                            <span v-for="{ type, text } in actions" :key="type">
-                                <component :is="type" style="margin-right: 8px"/>
-                                {{ text }}   <!-- 点赞收藏文字 -->
-                            </span>
-                        </template>
                         <a-list-item-meta :description="item.description">   <!-- 描述 -->
                             <template #title>
                                 <router-link :to="'/doc?ebookId=' + item.id">
@@ -60,6 +52,20 @@
                                 <a-avatar :src="item.cover"/>    <!-- 图标 -->
                             </template>
                         </a-list-item-meta>
+                        <template #actions>
+                            <span>
+                                <component v-bind:is="'ReadOutlined'" style="margin-right: 8px"/>
+                                {{ item.docCount }}
+                            </span>
+                            <span>
+                                <component v-bind:is="'LikeOutlined'" style="margin-right: 8px"/>
+                                {{ item.voteCount }}
+                            </span>
+                            <span>
+                                <component v-bind:is="'EyeOutlined'" style="margin-right: 8px"/>
+                                {{ item.viewCount }}
+                            </span>
+                        </template>
                     </a-list-item>
                 </template>
             </a-list>
@@ -70,16 +76,24 @@
 <script lang="ts">
     import {defineComponent, onMounted, ref} from 'vue';
     import axios from 'axios';
-    import {StarOutlined, LikeOutlined, MessageOutlined, MailOutlined, UserAddOutlined} from '@ant-design/icons-vue';
+    import {
+        ReadOutlined,
+        LikeOutlined,
+        EyeOutlined,
+        MailOutlined,
+        RightSquareOutlined,
+        UserAddOutlined
+    } from '@ant-design/icons-vue';
     import {Tool} from "@/util/tool";
     import {message} from "ant-design-vue";
 
     export default defineComponent({
         name: 'HomeView',
-        StarOutlined,
+        ReadOutlined,
         LikeOutlined,
-        MessageOutlined,
+        EyeOutlined,
         MailOutlined,
+        RightSquareOutlined,
         UserAddOutlined,
 
         setup() {
@@ -88,12 +102,6 @@
             onMounted(() => {
                 handleQueryCategory();
             });  // onMounted
-
-            const actions: Record<string, string>[] = [
-                {type: 'StarOutlined', text: '156'},
-                {type: 'LikeOutlined', text: '156'},
-                {type: 'MessageOutlined', text: '2'},
-            ];
 
             const level1 = ref();
             const handleQueryCategory = () => {
@@ -138,8 +146,6 @@
 
             return {
                 ebooks,  //3
-                actions,
-
                 level1,
 
                 handleClick,
