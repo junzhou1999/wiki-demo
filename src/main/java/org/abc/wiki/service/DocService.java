@@ -9,6 +9,7 @@ import org.abc.wiki.domain.Doc;
 import org.abc.wiki.domain.DocExample;
 import org.abc.wiki.mapper.ContentMapper;
 import org.abc.wiki.mapper.DocMapper;
+import org.abc.wiki.mapper.DocMapperCust;
 import org.abc.wiki.req.DocQueryReq;
 import org.abc.wiki.req.DocSaveReq;
 import org.abc.wiki.resp.DocQueryResp;
@@ -36,6 +37,9 @@ public class DocService {
 
 	@Resource
 	private DocMapper docMapper;
+
+	@Resource
+	private DocMapperCust docMapperCust;
 
 	@Resource
 	private ContentMapper contentMapper;
@@ -125,6 +129,8 @@ public class DocService {
 
 	public String findContent(Long id) {
 		Content content = contentMapper.selectByPrimaryKey(id);
+		// 查看文档，阅读数加1
+		docMapperCust.increaseViewCount(id);
 		if (ObjectUtils.isEmpty(content)) {  // 判空是判空整个对象，不是判空对象的某个属性
 			return "";
 		}
