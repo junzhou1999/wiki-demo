@@ -27,8 +27,15 @@
                 </a-tree>
             </a-col>
             <a-col :span="18">
-                <div class="wangeditor5" :innerHTML="displayHtml">
+                <div>
+                    <h2>{{doc.name}}</h2>
+                    <div>
+                        <span style="font-size: medium">阅读数：{{doc.viewCount}}</span> &nbsp; &nbsp;
+                        <span style="font-size: medium">点赞数：{{doc.voteCount}}</span>
+                    </div>
+                    <a-divider style="height: 2px; background-color: #ffcb93"/>
                 </div>
+                <div class="wangeditor5" :innerHTML="displayHtml"></div>
             </a-col>
         </a-row>
     </a-layout-content>
@@ -90,6 +97,7 @@
                         if (Tool.isNotEmpty(level1)) {
                             docLength.value = level1.value.length;
                             getAllParentId(level1.value);  // 初始展开所有的列表
+                            doc.value = level1.value[0];   // 初始显示文档信息
                             defaultSelectedKeys.value = [level1.value[0].id];
                             handleQueryContent(level1.value[0].id);
                         }
@@ -195,6 +203,7 @@
                 displayHtml,
                 defaultSelectedKeys,
                 onSelect,
+                doc,
 
                 docLength,
                 searchValue,
