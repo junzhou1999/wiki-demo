@@ -162,4 +162,13 @@ public class DocService {
 		resp.setHref(url);
 		return resp;
 	}
+
+	/**
+	 * 点赞功能
+	 *
+	 * @param id
+	 */
+	public void vote(Long id) {
+		docMapperCust.increaseVoteCount(id);
+	}
 }

@@ -20,15 +20,16 @@ public class SpringMvcConfig implements WebMvcConfigurer {
 
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(loginInterceptor)
-				.addPathPatterns("/**")  // 拦截所有接口
-				.excludePathPatterns(   // 不拦截的接口
-						"/test/**",         // 测试接口不拦截
-						"/user/login",      // 登录接口不拦截
-						"/category/all",    // 分类接口不拦截
-						"/ebook/list",      // 查看电子书不拦截，其他增删改拦截
-						"/doc/upload-files/**",
-						"/doc/find/**",      // 文档信息
-						"/doc/find-content/**"  // 文档内容
+				.addPathPatterns("/**")       // 拦截所有接口
+				.excludePathPatterns(         // 不拦截的接口
+						"/test/**",               // 测试接口不拦截
+						"/user/login",            // 登录接口不拦截
+						"/category/all",          // 分类接口不拦截
+						"/ebook/list",            // 查看电子书不拦截，其他增删改拦截
+						"/doc/upload-files/**",   // 静态资源
+						"/doc/find/**",           // 文档信息
+						"/doc/find-content/**",   // 文档内容
+						"/doc/vote/**"            // 点赞功能
 				);
 	}
 

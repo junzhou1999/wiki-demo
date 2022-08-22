@@ -36,6 +36,14 @@
                     <a-divider style="height: 2px; background-color: #ffcb93"/>
                 </div>
                 <div class="wangeditor5" :innerHTML="displayHtml"></div>
+                <div class="div-vote">
+                    <a-button type="primary" shape="round" size="large" @click="handleVote">
+                        <template #icon>
+                            <LikeOutlined/>
+                        </template>
+                        点赞：{{doc.voteCount}} &nbsp;
+                    </a-button>
+                </div>
             </a-col>
         </a-row>
     </a-layout-content>
@@ -47,10 +55,14 @@
     import {Tool} from "@/util/tool";
     import {message} from "ant-design-vue";
     import {useRoute} from "vue-router";
+    import {LikeOutlined} from '@ant-design/icons-vue';
+
 
     export default defineComponent({
         name: 'DocView',
-
+        components: {
+            LikeOutlined,
+        },
         setup() {
             onMounted(() => {
                 handleQuery();
@@ -198,12 +210,27 @@
                 }
             };
 
+            /**
+             * 点赞请求
+             */
+            const handleVote = () => {
+                axios.get("/doc/vote/" + doc.value.id).then((response) => {
+                    const data = response.data;
+                    if (data.success) {
+                        doc.value.voteCount++;
+                    } else {
+                        message.error(data.message)
+                    }
+                });
+            };
+
             return {
                 level1,
                 displayHtml,
                 defaultSelectedKeys,
                 onSelect,
                 doc,
+                handleVote,
 
                 docLength,
                 searchValue,
@@ -272,5 +299,9 @@
 
     .wangeditor5 input[type="checkbox"] {
         margin-right: 5px;
+    }
+
+    .div-vote {
+        text-align: center;
     }
 </style>

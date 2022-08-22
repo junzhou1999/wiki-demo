@@ -75,4 +75,11 @@ public class DocController {
 		resp.setContent(upload);
 		return resp;
 	}
+
+	@RequestMapping(value = "/vote/{id}", method = RequestMethod.GET)
+	public CommonResp vote(@PathVariable Long id) {
+		CommonResp resp = new CommonResp();
+		docService.vote(id);
+		return resp;
+	}
 }
