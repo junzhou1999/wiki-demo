@@ -16,6 +16,8 @@ import org.abc.wiki.resp.DocQueryResp;
 import org.abc.wiki.resp.ImgUploadResp;
 import org.abc.wiki.resp.PageResp;
 import org.abc.wiki.util.CopyUtil;
+import org.abc.wiki.util.RedisUtil;
+import org.abc.wiki.util.RequestContext;
 import org.abc.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,9 @@ public class DocService {
 
 	@Resource
 	private SnowFlake snowFlake;
+
+	@Resource
+	private RedisUtil redisUtil;
 
 	private final String IMG_PATH =
 			System.getProperty("user.home") + File.separator + "upload-files" + File.separator + "images";
@@ -165,10 +170,16 @@ public class DocService {
 
 	/**
 	 * 点赞功能
+	 * 远程IP加DOC_ID作为点赞成功的key，24小时内同一篇文章只能点赞一遍
 	 *
 	 * @param id
 	 */
 	public void vote(Long id) {
-		docMapperCust.increaseVoteCount(id);
+		String remoteAddr = RequestContext.getRemoteAddr();
+		if (redisUtil.validateRepeat("DOC_VOTE_" + remoteAddr + "_" + id, 24 * 3600)) {
+			throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
+		} else {
+			docMapperCust.increaseVoteCount(id);
+		}
 	}
 }
