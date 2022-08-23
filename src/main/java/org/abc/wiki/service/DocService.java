@@ -19,6 +19,7 @@ import org.abc.wiki.util.CopyUtil;
 import org.abc.wiki.util.RedisUtil;
 import org.abc.wiki.util.RequestContext;
 import org.abc.wiki.util.SnowFlake;
+import org.abc.wiki.websocket.WebSocketServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,9 @@ public class DocService {
 
 	@Resource
 	private RedisUtil redisUtil;
+
+	@Resource
+	private WebSocketServer webSocketServer;
 
 	private final String IMG_PATH =
 			System.getProperty("user.home") + File.separator + "upload-files" + File.separator + "images";
@@ -181,5 +185,9 @@ public class DocService {
 		} else {
 			docMapperCust.increaseVoteCount(id);
 		}
+
+		// 推送消息
+		Doc docDB = docMapper.selectByPrimaryKey(id);
+		webSocketServer.sendInfo("【" + docDB.getName() + "】被点赞啦！");
 	}
 }
