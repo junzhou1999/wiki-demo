@@ -525,3 +525,9 @@
 * 本例中当收到一个点赞时，可以即使获得通知
 * 注：Controller是开放HTTP接口
 * websocket是开放websocket连接
+
+### 11-9
+* 前端部署Websocket环境
+##### 要点：
+* 因为每个页面都要使用footer组件，所以就在footer写入
+* 前端负责生成token
