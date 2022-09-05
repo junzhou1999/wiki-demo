@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -99,6 +100,7 @@ public class DocService {
 	/**
 	 * 更新和新增操作
 	 */
+	@Transactional
 	public void save(DocSaveReq req) {
 		Doc doc = CopyUtil.copy(req, Doc.class);
 		Content content = CopyUtil.copy(req, Content.class);  // 复制id和content文档内容
@@ -106,6 +108,10 @@ public class DocService {
 			// 新增
 			doc.setId(snowFlake.nextId());
 			docMapper.insertSelective(doc);
+
+			// 当这里出现异常时，事务会终止
+			// int a = 10/0;
+
 			content.setId(doc.getId());  // 两张表共用一个id
 			contentMapper.insert(content);
 		} else {
