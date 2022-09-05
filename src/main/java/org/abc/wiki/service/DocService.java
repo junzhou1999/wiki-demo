@@ -19,6 +19,7 @@ import org.abc.wiki.util.CopyUtil;
 import org.abc.wiki.util.RedisUtil;
 import org.abc.wiki.util.RequestContext;
 import org.abc.wiki.util.SnowFlake;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -31,7 +32,9 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class DocService {
@@ -56,6 +59,9 @@ public class DocService {
 
 	@Resource
 	private WsService wsService;
+
+	@Resource
+	private RocketMQTemplate rocketMQTemplate;
 
 	private final String IMG_PATH =
 			System.getProperty("user.home") + File.separator + "upload-files" + File.separator + "images";
@@ -195,6 +201,12 @@ public class DocService {
 		// 推送消息
 		Doc docDB = docMapper.selectByPrimaryKey(id);
 		String logId = MDC.get("LOG_ID");
-		wsService.sendInfo("【" + docDB.getName() + "】被点赞啦！", logId);
+
+//		wsService.sendInfo("【" + docDB.getName() + "】被点赞啦！", logId);
+
+		// RocketMQ发送方（客户端）
+		Map<String, Object> prop = new HashMap<>();
+		prop.put("LOG_ID", logId);
+		rocketMQTemplate.convertAndSend("VOTE_TOPIC", "【" + docDB.getName() + "】被点赞啦！", prop);
 	}
 }

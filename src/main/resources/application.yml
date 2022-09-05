@@ -35,3 +35,9 @@ logging:
       abc:
         wiki:
           mapper: trace
+
+# RocketMQ
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    group: default
