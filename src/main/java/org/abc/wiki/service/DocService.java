@@ -21,6 +21,7 @@ import org.abc.wiki.util.RequestContext;
 import org.abc.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -187,6 +188,7 @@ public class DocService {
 
 		// 推送消息
 		Doc docDB = docMapper.selectByPrimaryKey(id);
-		wsService.sendInfo("【" + docDB.getName() + "】被点赞啦！");
+		String logId = MDC.get("LOG_ID");
+		wsService.sendInfo("【" + docDB.getName() + "】被点赞啦！", logId);
 	}
 }
