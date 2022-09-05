@@ -559,3 +559,6 @@
 * RocketMQ本地启动：
 * mqnamesrv.cmd
 * mqbroker.cmd -n 127.0.0.1:9876 autoCreateTopicEnable=true (自动创建topic)
+
+### 11-15
+* 不使用RocketMQ
