@@ -565,3 +565,8 @@
 
 ### 12-1
 * 生成电子快照表和持久层代码
+
+### 12-2
+* 增加定时任务，定时收集任务
+* Postgre的复杂sql语句够难的
+* 经测试可以在mybatis的xml一次查询多个sql语句，不用增加allowMultiQueries=true的连接参数

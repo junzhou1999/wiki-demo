@@ -230,3 +230,54 @@ create table T_EBOOK_SNAPSHOT
     constraint PK_EBOOKSNAP primary key ("id"),
     constraint UK_EBOOKID_DATE unique ("ebook_id", "date")
 );
+
+-- 为所有电子表生成一条今天的记录，如果还没有
+-- 更新总阅读数，总点赞数
+-- 更新今天阅读数，今天点赞数
+insert into T_EBOOK_SNAPSHOT(ebook_id, date, view_count, vote_count, view_increase, vote_increase)
+    (
+        select id, current_date, 0, 0, 0, 0
+        from T_EBOOK t1
+        where not exists
+            (
+                select 1
+                from T_EBOOK_SNAPSHOT t2
+                where t2.date = current_date
+                  and t2.ebook_id = t1.id
+            )
+    );
+
+update T_EBOOK_SNAPSHOT t1
+set view_count = t2.view_count,
+    vote_count = t2.vote_count
+from T_EBOOK t2
+where t1."date" = current_date
+  and t1.ebook_id = t2.id;
+
+-- 获取昨天的数据
+-- 今天所有的电子书左联结昨天所有的电子书，阅读数点赞数取昨天的
+select t1.ebook_id, t2.view_count, t2.vote_count
+from T_EBOOK_SNAPSHOT t1
+         left join
+     (select ebook_id, view_count, vote_count from T_EBOOK_SNAPSHOT where date = current_date - 1) t2
+     on t1.ebook_id = t2.ebook_id
+where t1."date" = current_date;
+
+-- t3：今天所有的电子书(取其中的ebookId)
+-- t4：昨天的电子书（取其中的viewCount和voteCount）
+-- t2：t3和t4组成的表
+update T_EBOOK_SNAPSHOT t1
+set view_increase = (t1.view_count - coalesce(t2.view_count, 0)),
+    vote_increase = (t1.vote_count - coalesce(t2.vote_count, 0))
+from (
+         select t3.ebook_id, t4.view_count, t4.vote_count
+         from T_EBOOK_SNAPSHOT t3
+                  left join
+              (
+                  select ebook_id, view_count, vote_count from T_EBOOK_SNAPSHOT where date = current_date - 1
+              ) t4
+              on t3.ebook_id = t4.ebook_id
+         where t3."date" = current_date
+     ) t2
+where t1.ebook_id = t2.ebook_id
+  and t1."date" = current_date;
