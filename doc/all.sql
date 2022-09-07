@@ -215,3 +215,18 @@ from (select ebook_id, count(1) doc_count, sum(view_count) view_count, sum(vote_
       from public.T_DOC
       group by ebook_id) t1
 where T_EBOOK.id = t1.ebook_id;
+
+-- 电子书快照表
+drop table if exists T_EBOOK_SNAPSHOT;
+create table T_EBOOK_SNAPSHOT
+(
+    "id"            bigserial not null,           -- 获取ebook数据不经过Java代码
+    "ebook_id"      bigint    not null default 0, -- 电子书ID
+    "date"          date      not null,           -- 快照日期
+    "view_count"    int       not null default 0, -- 阅读数
+    "vote_count"    int       not null default 0, -- 点赞数
+    "view_increase" int       not null default 0, -- 阅读增长
+    "vote_increase" int       not null default 0, -- 点赞增长
+    constraint PK_EBOOKSNAP primary key ("id"),
+    constraint UK_EBOOKID_DATE unique ("ebook_id", "date")
+);
