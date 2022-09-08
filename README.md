@@ -570,3 +570,6 @@
 * 增加定时任务，定时收集任务
 * Postgre的复杂sql语句够难的
 * 经测试可以在mybatis的xml一次查询多个sql语句，不用增加allowMultiQueries=true的连接参数
+
+### 12-3
+* 后端获取统计数值的接口

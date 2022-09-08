@@ -232,7 +232,7 @@ create table T_EBOOK_SNAPSHOT
 );
 
 -- 为所有电子表生成一条今天的记录，如果还没有
--- 更新总阅读数，总点赞数
+-- 更新总阅读数，总点赞数（累计历史的）
 -- 更新今天阅读数，今天点赞数
 insert into T_EBOOK_SNAPSHOT(ebook_id, date, view_count, vote_count, view_increase, vote_increase)
     (
@@ -281,3 +281,10 @@ from (
      ) t2
 where t1.ebook_id = t2.ebook_id
   and t1."date" = current_date;
+
+-- 统计昨天今天的数值
+select t1."date", sum(t1.view_count), sum(t1.vote_count), sum(t1.view_increase), sum(vote_increase)
+from T_EBOOK_SNAPSHOT t1
+where t1."date" >= current_date - 1
+group by t1."date"
+order by t1."date" asc

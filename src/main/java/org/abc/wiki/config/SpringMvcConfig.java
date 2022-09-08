@@ -29,7 +29,8 @@ public class SpringMvcConfig implements WebMvcConfigurer {
 						"/doc/upload-files/**",   // 静态资源
 						"/doc/find/**",           // 文档信息
 						"/doc/find-content/**",   // 文档内容
-						"/doc/vote/**"            // 点赞功能
+						"/doc/vote/**",           // 点赞功能
+						"/ebook-snapshot/**"      // 数据展示
 				);
 	}
 
