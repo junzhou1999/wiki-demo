@@ -12,10 +12,7 @@
                     欢迎
                 </a-menu-item>
 
-                <!-- 有子菜单的用a-sub-menu标签 -->
-                <!-- 最深3层的菜单 -->
                 <a-sub-menu v-for="item in level1" :key="item.id" :title="item.name">
-
                     <template #icon>
                         <UserAddOutlined/>
                     </template>
@@ -35,7 +32,7 @@
                 :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
         >
             <div v-show="isShowWelcome" class="welcome">
-                <h1>欢迎使用junzhousky的电子书网页服务</h1>
+                <the-welcome></the-welcome>
             </div>
             <!-- 取后端数据，电子书不多，不再分页，每行显示多个 -->
             <a-list v-show="!isShowWelcome" item-layout="vertical" size="large"
@@ -86,6 +83,7 @@
     } from '@ant-design/icons-vue';
     import {Tool} from "@/util/tool";
     import {message} from "ant-design-vue";
+    import TheWelcome from '@/components/TheWelcome.vue';
 
     export default defineComponent({
         name: 'HomeView',
@@ -95,6 +93,9 @@
         MailOutlined,
         RightSquareOutlined,
         UserAddOutlined,
+        components: {
+            TheWelcome
+        },
 
         setup() {
             const ebooks = ref();  //1
