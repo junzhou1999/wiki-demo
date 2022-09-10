@@ -108,15 +108,15 @@
             statistic.value = {};
             const getStatistic = () => {
                 axios.get("/ebook-snapshot/get-statistic").then((response) => {
-                    const data = response.data;
+                    const data = response.data;  // 0是今天的，1是昨天的
                     if (data.success) {
                         const statisticResp = data.content;
                         // 今日快照表的总观看数
-                        statistic.value.viewCount = statisticResp[1].viewCount;
-                        statistic.value.voteCount = statisticResp[1].voteCount;
+                        statistic.value.viewCount = statisticResp[0].viewCount;
+                        statistic.value.voteCount = statisticResp[0].voteCount;
                         // 数据库increase字段就是今天总历史阅读量(view_count)-昨天总阅读量，所以今天阅读量=今天增长的阅读量
-                        statistic.value.todayViewCount = statisticResp[1].viewIncrease;
-                        statistic.value.todayVoteCount = statisticResp[1].voteIncrease;
+                        statistic.value.todayViewCount = statisticResp[0].viewIncrease;
+                        statistic.value.todayVoteCount = statisticResp[0].voteIncrease;
 
                         const now = new Date();
                         const nowRate = (now.getHours() * 60 + now.getMinutes()) / (60 * 24);
@@ -124,9 +124,13 @@
                         // todayforcastCount: 今天预计阅读量 = 目前阅读量 / 当前时间点占全天
                         statistic.value.todayforcastCount = parseInt(String(statistic.value.todayViewCount / nowRate));
 
-                        // todayforcastRate: 今天预计阅读率 = (今天阅读量 - 昨天阅读量) / 昨天阅读量
-                        statistic.value.todayforcastRate =
-                            (statistic.value.todayforcastCount - statisticResp[0].viewIncrease) / statisticResp[0].viewIncrease * 100;
+                        if (statisticResp.length == 1 || statisticResp[1].viewIncrease == 0) {
+                            statistic.value.todayforcastRate = 100;  // 服务上线或昨没有阅读数，避免取不到昨天的数据
+                        } else {
+                            // todayforcastRate: 今天预计阅读率 = (今天阅读量 - 昨天阅读量) / 昨天阅读量
+                            statistic.value.todayforcastRate =
+                                (statistic.value.todayforcastCount - statisticResp[1].viewIncrease) / statisticResp[1].viewIncrease * 100;
+                        }
                         statistic.value.todayforcastRateAbs =
                             Math.abs(statistic.value.todayforcastRate);
                     }
