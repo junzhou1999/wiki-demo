@@ -24,4 +24,12 @@ public class EbookSnapshotController {
 		resp.setContent(list);
 		return resp;
 	}
+
+	@RequestMapping(value = "/get-30-statistic", method = RequestMethod.GET)
+	public CommonResp get30Statistic() {
+		List<StatisticResp> list = ebookSnapshotService.get30Statistic();
+		CommonResp<List<StatisticResp>> resp = new CommonResp<>();
+		resp.setContent(list);
+		return resp;
+	}
 }

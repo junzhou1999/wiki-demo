@@ -54,4 +54,15 @@
         group by t1."date"
         order by t1."date" desc
     </select>
+
+    <!-- 获取30天内的每天阅读数和点赞数 -->
+    <select id="get30Statistic" resultType="org.abc.wiki.resp.StatisticResp">
+        select t1."date",
+               sum(t1.view_increase) as viewIncrease,
+               sum(t1.vote_increase) as voteIncrease
+        from T_EBOOK_SNAPSHOT t1
+        where t1."date" between current_date - 30 and current_date - 1
+        group by t1."date"
+        order by t1."date" asc
+    </select>
 </mapper>
