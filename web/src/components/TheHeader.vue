@@ -1,6 +1,6 @@
 <template>
     <a-layout-header class="header">
-        <div class="logo"/>
+        <span class="logo">知识库&学习笔记</span>
         <a-menu
                 theme="dark"
                 mode="horizontal"
@@ -178,6 +178,17 @@
 </script>
 
 <style>
+    .logo {
+        float: left;
+        width: 150px;
+        height: 31px;
+        /*margin: 16px 24px 16px 0;*/
+        margin-right: 24px;
+        color: white;
+        font-size: 16px;
+        /*background: rgba(255, 255, 255, 0.3);*/
+    }
+
     .login-menu {
         /*float: right; // 菜单使用了flex布局，float失效：参考：http://www.imooc.com/wiki/css3lesson/flex.html*/
         position: absolute;
