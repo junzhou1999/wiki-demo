@@ -18,6 +18,8 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'off',
     'vue/no-unused-vars': 'off',
     '@typescript-eslint/no-var-requires': 'off',
-    '@typescript-eslint/ban-ts-comment': 0
+    '@typescript-eslint/ban-ts-comment': 0,
+    '@typescript-eslint/no-non-null-assertion': 'off'
+
   }
 }

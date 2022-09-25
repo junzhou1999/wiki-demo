@@ -153,7 +153,10 @@
 
             const init30Echarts = (list: any) => {
                 // 基于准备好的dom，初始化echarts实例
-                const myChart = echarts.init(document.getElementById('main'));
+                const domMap = document.getElementById('main')!;
+                // 清除Echarts默认添加的属性
+                domMap.removeAttribute("_echarts_instance_");
+                const myChart = echarts.init(domMap);
 
                 const xAxis = [];  // 横轴，30天日期
                 const viewSeries = [];  // 每天的阅读量
@@ -234,7 +237,10 @@
 
             const initClock = () => {
                 // 基于准备好的dom，初始化echarts实例
-                const myChart = echarts.init(document.getElementById('main2'));
+                const domMap = document.getElementById('main2')!;
+                // 清除Echarts默认添加的属性
+                domMap.removeAttribute("_echarts_instance_");
+                const myChart = echarts.init(domMap);
 
                 const option = {
                     animationDurationUpdate: 300,
