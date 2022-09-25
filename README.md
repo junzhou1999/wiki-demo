@@ -605,3 +605,9 @@
     * 增加启动参数：-Dspring.profiles.active=prod
 * 2.自定义打包文件名并修正打包时的一些错误
 * 3.nginx的配置文件为：wiki-server.conf
+
+### 13-3
+* 前端vue部署运行到服务器并使用nginx作为代理服务器
+* 1.设置统一的请求地址前缀为后端的服务器地址
+* 2.nginx的配置文件为：wiki.conf
+* 注：我的前后端都放到了一台服务器上
