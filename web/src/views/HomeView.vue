@@ -4,6 +4,7 @@
             <a-menu :style="{ height: '100%', borderRight: 0 }"
                     mode="inline"
                     @click="handleClick"
+                    :openKeys="openKeys"
             >
                 <a-menu-item key="welcome">
                     <template #icon>
@@ -14,7 +15,7 @@
 
                 <a-sub-menu v-for="item in level1" :key="item.id" :title="item.name">
                     <template #icon>
-                        <UserAddOutlined/>
+                        <MailOutlined/>
                     </template>
 
                     <template v-for="child in item.children" :key="child.id">
@@ -105,11 +106,19 @@
             });  // onMounted
 
             const level1 = ref();
+            const openKeys = ref();
             const handleQueryCategory = () => {
                 axios.get("/category/all").then((response) => {
                     const data = response.data;
                     if (data.success) {
                         const categorys = data.content;
+
+                        // 加载完分类后，将侧边栏全部展开
+                        openKeys.value = [];
+                        for (let i = 0; i < categorys.length; i++) {
+                            openKeys.value.push(categorys[i].id)
+                        }
+
                         level1.value = [];
                         level1.value = Tool.array2Tree(categorys, 0);
                     } else {
@@ -150,7 +159,9 @@
                 level1,
 
                 handleClick,
-                isShowWelcome
+                isShowWelcome,
+
+                openKeys
             }
         }  // setup
     });
