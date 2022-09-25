@@ -185,7 +185,7 @@
                 placeholder: '请输入文档内容...',
                 MENU_CONF: {
                     uploadImage: {
-                        server: 'http://127.0.0.1:5921/doc/upload-img',
+                        server: process.env.VUE_APP_SERVER + '/doc/upload-img',
                         fieldName: 'editorImg',
                         headers: {
                             token: store.state.user.token
