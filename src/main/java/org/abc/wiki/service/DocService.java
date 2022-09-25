@@ -13,7 +13,6 @@ import org.abc.wiki.mapper.DocMapperCust;
 import org.abc.wiki.req.DocQueryReq;
 import org.abc.wiki.req.DocSaveReq;
 import org.abc.wiki.resp.DocQueryResp;
-import org.abc.wiki.resp.ImgUploadResp;
 import org.abc.wiki.resp.PageResp;
 import org.abc.wiki.util.CopyUtil;
 import org.abc.wiki.util.RedisUtil;
@@ -25,12 +24,9 @@ import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.util.List;
 
 @Service
@@ -150,32 +146,6 @@ public class DocService {
 			return "";
 		}
 		return content.getContent();
-	}
-
-	public ImgUploadResp uploadImg(MultipartFile file) {
-		// 获取后缀
-		String fileType = file.getContentType();
-		String suffix = fileType.substring(fileType.indexOf("/") + 1);
-		// 生成文件名
-		Long prefix = snowFlake.nextId();
-		String fileName = prefix + "." + suffix;
-		// 生成绝对目录文件
-		File dest = new File(IMG_PATH + File.separator + fileName);
-		if (!dest.getParentFile().exists()) {
-			dest.getParentFile().mkdirs();
-		}
-		try {
-			Files.copy(file.getInputStream(), dest.toPath());
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new BusinessException(BusinessExceptionCode.UPLOAD_FILES_FAIL);
-		}
-		ImgUploadResp resp = new ImgUploadResp();
-		String url = "http://127.0.0.1:5921" + "/doc/upload-files/images/" + fileName;
-		resp.setUrl(url);
-		resp.setAlt(fileName);
-		resp.setHref(url);
-		return resp;
 	}
 
 	/**

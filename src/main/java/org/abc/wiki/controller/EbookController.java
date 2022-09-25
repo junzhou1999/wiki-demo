@@ -4,9 +4,12 @@ import org.abc.wiki.req.EbookQueryReq;
 import org.abc.wiki.req.EbookSaveReq;
 import org.abc.wiki.resp.CommonResp;
 import org.abc.wiki.resp.EbookQueryResp;
+import org.abc.wiki.resp.UploadResp;
 import org.abc.wiki.resp.PageResp;
 import org.abc.wiki.service.EbookService;
+import org.abc.wiki.util.UploadUtil;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -51,6 +54,14 @@ public class EbookController {
 	public CommonResp delete(@PathVariable Long id) {
 		ebookService.delete(id);
 		CommonResp resp = new CommonResp();
+		return resp;
+	}
+
+	@RequestMapping(value = "/upload-cover", method = RequestMethod.POST)
+	public CommonResp uploadImg(@RequestPart(value = "coverImg") MultipartFile file) {
+		UploadResp upload = UploadUtil.upload(file, "cover");  // 上传的分类目录
+		CommonResp<UploadResp> resp = new CommonResp<>();
+		resp.setContent(upload);
 		return resp;
 	}
 }
