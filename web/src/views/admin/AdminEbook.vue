@@ -33,7 +33,7 @@
                 <template #bodyCell="{ column, record }">
                     <!-- 封面渲染，遍历数组里面的cover -->
                     <template v-if="column.key === 'cover'">
-                        <img :src="record.cover" alt="avatar">
+                        <img :src="record.cover" alt="avatar" class="custom-img">
                     </template>
                     <template v-else-if="column.key === 'category'">
                         <span>{{ getCategoryName(record.category1Id) }}/{{ getCategoryName(record.category2Id) }}</span>
@@ -79,7 +79,23 @@
                 <a-input v-model:value="ebook.name"/>
             </a-form-item>
             <a-form-item label="封面">
-                <a-input v-model:value="ebook.cover"/>
+                <a-upload
+                        v-model:file-list="fileList"
+                        accept="image/*"
+                        :before-upload="beforeUpload"
+                        :headers="{token: token}"
+                        name="coverImg"
+                        :action="baseUrl + '/ebook/upload-cover'"
+                        :max-count="1"
+                        list-type="picture"
+                >
+                    <a-button>
+                        <template #icon>
+                            <UploadOutlined/>
+                        </template>
+                        点击上传封面
+                    </a-button>
+                </a-upload>
             </a-form-item>
             <a-form-item label="分类">
                 <!-- 绑定的响应式变量（代表选中之后赋予的值） 数据来源 下拉框显示的值和对应的值 -->
@@ -103,6 +119,7 @@
     import axios from 'axios';
     import {message} from "ant-design-vue";
     import {Tool} from "@/util/tool";
+    import store from "@/store";
 
     export default defineComponent({
         name: 'AdminEbook',
@@ -189,15 +206,20 @@
             const modalVisible = ref<boolean>(false);
             const modalLoading = ref<boolean>(false);
             const categoryIds = ref();
+            const fileList = ref();
+            fileList.value = [];
             const handleModalOk = () => {
                 modalLoading.value = true;
                 ebook.value.category1Id = categoryIds.value[0];
                 ebook.value.category2Id = categoryIds.value[1];
+                // 把上传的图片url放到数据库
+                ebook.value.cover = fileList.value[0].response.content.url;
                 // 把选择框的内容给到ebook
                 axios.post("/ebook/save", ebook.value).then((response) => {
                     const data = response.data;
                     modalLoading.value = false;   // 无论成功与否loading效果都要终止
                     if (data.success) {
+                        fileList.value = [];
                         modalVisible.value = false;
 
                         // 刷新页面
@@ -211,6 +233,15 @@
                 });
             };
 
+            // 封面上传
+            const beforeUpload = (file: any) => {
+                const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
+                if (!isJpgOrPng) {
+                    message.error('图片格式只能为jpg或者png');
+                }
+                return isJpgOrPng;
+            };
+
             // 表单的ebook存储的值
             const ebook = ref();
             // 编辑
@@ -219,6 +250,7 @@
                 ebook.value = Tool.copy(record);  // 复制多一个值，以免对原来record的引用进行修改
                 categoryIds.value = [];
                 categoryIds.value = [ebook.value.category1Id, ebook.value.category2Id];
+                fileList.value = [{url: ebook.value.cover, name: ebook.value.name + ".jpg"}];
                 modalVisible.value = true;  // 弹出对话框
             };
 
@@ -249,6 +281,7 @@
             // 新增
             const add = () => {
                 ebook.value = {};
+                fileList.value = [];
                 modalVisible.value = true;  // 弹出对话框
             };
 
@@ -282,6 +315,8 @@
                 return result;
             };
 
+            const baseUrl = process.env.VUE_APP_SERVER;
+            const token = store.state.user.token;
             onMounted(() => {
                 handleQueryCategory();
             });
@@ -307,9 +342,23 @@
 
                 categoryIds,
                 level1,
+                fileList,
 
-                getCategoryName
+                getCategoryName,
+
+                beforeUpload,
+                baseUrl,
+                token
             }
         }
     });
 </script>
+
+<style scoped>
+    .custom-img {
+        width: 80px;
+        height: 80px;
+        border-radius: 9px;
+        object-fit: cover;
+    }
+</style>
