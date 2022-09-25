@@ -1,0 +1,13 @@
+spring:
+  # postgres数据库连接
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5432/db_wikidev?stringtype=unspecified
+    username: yourusername
+    password: yourpassword
+    driver-class-name: org.postgresql.Driver
+  # redis，选择第二个数据库
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: redispwd
+    database: 0
