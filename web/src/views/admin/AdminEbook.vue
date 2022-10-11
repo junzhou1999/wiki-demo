@@ -213,7 +213,7 @@
                 ebook.value.category1Id = categoryIds.value[0];
                 ebook.value.category2Id = categoryIds.value[1];
                 // 把上传的图片url放到数据库
-                ebook.value.cover = fileList.value[0].response.content.url;
+                ebook.value.cover = (fileList.value[0]) ? fileList.value[0].url : '';
                 // 把选择框的内容给到ebook
                 axios.post("/ebook/save", ebook.value).then((response) => {
                     const data = response.data;
@@ -250,7 +250,7 @@
                 ebook.value = Tool.copy(record);  // 复制多一个值，以免对原来record的引用进行修改
                 categoryIds.value = [];
                 categoryIds.value = [ebook.value.category1Id, ebook.value.category2Id];
-                fileList.value = [{url: ebook.value.cover, name: ebook.value.name + ".jpg"}];
+                fileList.value = ebook.value.cover ? [{url: ebook.value.cover, name: ebook.value.name + ".jpg"}] : [];
                 modalVisible.value = true;  // 弹出对话框
             };
 
